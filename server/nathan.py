@@ -1,4 +1,3 @@
-
 import cv2
 rgb = cv2.VideoCapture(0)
 _, fr = rgb.read()    
