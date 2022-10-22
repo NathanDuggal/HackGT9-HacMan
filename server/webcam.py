@@ -57,7 +57,7 @@ def website(x_joy, y_joy, calibrating, wink):
     @app.route("/calibrate", methods=['GET'])
     def calibrate():
         calibrating.value = 1
-        return True
+        return "ok"
     app.run(debug=True, use_reloader=False, port=8004)
     
     
@@ -185,7 +185,7 @@ if __name__ == '__main__':
     x_joy = Value('d', 0.0)
     y_joy = Value('d', 0.0)
     wink = Value('i', 0)
-    calibrating = Value('i', 1)
+    calibrating = Value('i', 0)
     p1 = Process(target=video_stream, args=(x_joy, y_joy, calibrating, wink))
     p2 = Process(target=website, args=(x_joy, y_joy, calibrating, wink))
     p2.start()

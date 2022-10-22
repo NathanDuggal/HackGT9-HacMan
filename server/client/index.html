@@ -293,6 +293,10 @@
             var x = document.getElementById("calibrating");
             x.style.display = "block";
             //setTimeout(tester, 1000);
+            var xmlHttp = new XMLHttpRequest();
+                
+            xmlHttp.open( "GET", "/calibrate", false); // false for synchronous request
+            xmlHttp.send();
             setTimeout(init, 5000);
         }
 
