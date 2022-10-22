@@ -12,14 +12,14 @@ detector = dlib.get_frontal_face_detector()
 
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-print(1)
+#print(1)
 while(True):
-    print(2)
+    #print(2)
       
     # Capture the video frame
     # by frame
     ret, frame = vid.read()
-    scale_percent = 10 # percent of original size
+    scale_percent = 20 # percent of original size
     width = int(frame.shape[1] * scale_percent / 100)
     height = int(frame.shape[0] * scale_percent / 100)
     dim = (width, height)
@@ -41,11 +41,14 @@ while(True):
 
         # Look for the landmarks
         landmarks = predictor(image=gray, box=face)
-        x = landmarks.part(27).x
-        y = landmarks.part(27).y
 
-        # Draw a circle
-        cv2.circle(img=frame, center=(x, y), radius=10, color=(0, 255, 0), thickness=-1)
+        points = [33, 27, 8]
+        for n in points:
+            x = landmarks.part(n).x
+            y = landmarks.part(n).y
+
+            # Draw a circle
+            cv2.circle(img=frame, center=(x, y), radius=10, color=(0, 255, 0), thickness=-1)
 
         # Display the resulting frame
         cv2.imshow('frame', frame)
