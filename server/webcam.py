@@ -135,9 +135,8 @@ def video_stream(x_joy, y_joy, calibrating):
                 calibrated_turn_list.append(ratio_x)
                 calibrated_turn = np.mean(calibrated_turn_list)
 
-            joystick_y = np.clip((ratio_y - calibrated_nod) * 4, -1, 1)
+            joystick_y = np.clip((ratio_y - calibrated_nod) * 10, -1, 1)
             joystick_x = np.clip((ratio_x - calibrated_turn) * -3, -1, 1)
-            #joystick_x = np.clip((difference - calibrated_tilt) / 0.3, -1, 1)
 
 
             
@@ -145,15 +144,12 @@ def video_stream(x_joy, y_joy, calibrating):
             y_joy.value = joystick_y
             x_joy.value = joystick_x
 
-            #this also literally doesn't work
+            #convert to polar (not implemented)
             theta = cart_to_polar(joystick_x, joystick_y)[0]
             r = cart_to_polar(joystick_x, joystick_y)[1]
             if r > 1: #if r > 1
                 r = 1
-            # print("theta: ")
-            # print(theta)
-            # print("distance r:")
-            # print(r)
+
         else:
             y_joy.value = 0
             x_joy.value = 0
