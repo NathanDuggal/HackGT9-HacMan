@@ -9,6 +9,7 @@
         const windowHeight = window.screen.height;
         const mazeWidth = 224;
         const mazeHeight = 248;
+        const pacmanSize = 16;
 
         // Keyboard maps
         const keyDownMap = new Map();
@@ -30,7 +31,7 @@
         ]
         
         // Joystick properties
-        const deadThresh = 0.5;
+        const deadThresh = 0.8;
         var lastAni = "pacmanIdleRight";
 
         // Instance variables
@@ -46,7 +47,7 @@
             // -----------------
 
             characters = {
-                images: ["sprites/Pacman.png"],
+                images: ["assets/sprites/Pacman.png"],
                 frames: {width:16, height:16},
                 animations: {
                     pacmanIdleRight:0,
@@ -69,7 +70,7 @@
             };
 
             mazeImage = {
-                images: ["sprites/Maze.png"],
+                images: ["assets/sprites/Maze.png"],
                 frames: {width:224, height:248},
             };
 
@@ -151,7 +152,7 @@
 			createjs.Ticker.on("tick", tick);
 		}
 
-        function checkKeys() {
+        function movePacman() {
             if (circle.currentAnimation == "pacmanMoveUp") {
                 circle.y += -10;
             } else if (circle.currentAnimation == "pacmanMoveDown") {
@@ -159,20 +160,46 @@
             } else if (circle.currentAnimation == "pacmanMoveRight") {
                 circle.x += 10;
             } else if (circle.currentAnimation == "pacmanMoveLeft") {
-               circle.x += -10;
+                circle.x += -10;
+            }
+
+            var pacmanTopSide = circle.y;
+            var pacmanBottomSide = circle.y + circle.scaleY * pacmanSize;
+            var pacmanLeftSide = circle.x;
+            var pacmanRightSide = circle.x + circle.scaleX * pacmanSize;
+
+            // Right side collision
+            if (pacmanRightSide > windowWidth/2 + maze.scaleX * mazeWidth/2) {
+                
+                circle.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - circle.scaleX * pacmanSize;
+            // Left side collision
+            } else if (pacmanLeftSide < windowWidth/2 - maze.scaleX * mazeWidth/2) {
+                circle.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
+            }
+
+            // Bottom side collision
+            if (pacmanBottomSide > windowHeight/2 + maze.scaleY * mazeHeight/2) {
+                circle.y = windowHeight/2 + maze.scaleY * mazeHeight/2 - circle.scaleY * pacmanSize;
+            // Top side collision
+            } else if (pacmanTopSide < windowHeight/2 - maze.scaleY * mazeHeight/2) {
+                circle.y = windowHeight/2 - maze.scaleY * mazeHeight/2;
             }
         }
 
         function tick(event) {
             stage.update(event);
 
-            var xmlHttp = new XMLHttpRequest();
-            
-            xmlHttp.open( "GET", "/data", false ); // false for synchronous request
-            xmlHttp.send();
+            var x = 0;
+            var y = 0;
+            try {
+                var xmlHttp = new XMLHttpRequest();
+                
+                xmlHttp.open( "GET", "/data", false ); // false for synchronous request
+                xmlHttp.send();
 
-            var x = JSON.parse(xmlHttp.responseText).x_joy;
-            var y = JSON.parse(xmlHttp.responseText).y_joy;
+                x = JSON.parse(xmlHttp.responseText).x_joy;
+                y = JSON.parse(xmlHttp.responseText).y_joy;
+            } catch (error) {}
             
             // circle.x += 10 * x;
             // circle.y += -10 * y;
@@ -200,21 +227,7 @@
             }
             lastAni = newAni;
 
-            //if (circle.x < 0) {
-            //    circle.x = 0;
-            //}
-            //if (circle.x > windowWidth) {
-            //    circle.x = windowWidth;
-            //}
-
-            //if (circle.y < 0) {
-            //    cricle.y = 0;
-            //}
-            //if (circle.y > windowHeight) {
-            //    circle.y = windowHeight;
-            //}
-
-            checkKeys();
+            movePacman();
         }
 
         function setScale(sprite) {
