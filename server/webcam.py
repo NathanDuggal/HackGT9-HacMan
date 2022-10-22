@@ -11,15 +11,18 @@ from flask import render_template
 from flask import send_from_directory
 import matplotlib.pyplot as plt
 import matplotlib
+from flask import Flask, request, jsonify
+
 plt.ion()
 plt.show()
 
-def difference_between_x_points(points):
+#gets head tilt
+def ratio_between_x_points(points):
     top_point = points[0] #retrieving from tuple of points (0 through 2)
     bottom_point = points[2]
     return top_point[0] - bottom_point[0] #x values of top and bottom points
     
-
+#gets head nod ratios
 def ratio_between_points(points):
     distances = []
     ratios = []
@@ -35,7 +38,7 @@ def cart_to_polar(x, y): #this literally does not work
     position = [theta, r]
     return position
 
-def website(x_joy, y_joy):
+def website(x_joy, y_joy, calibrating):
     app = Flask(__name__, template_folder='client', static_folder='client/sprites',static_url_path="/sprites")
     @app.route("/")
     def pacman():
@@ -43,11 +46,14 @@ def website(x_joy, y_joy):
     @app.route("/data")
     def getdata():
         return '{{"x_joy": {}, "y_joy": {}}}'.format(x_joy.value,y_joy.value)
-    
+    @app.route("/calibrate", methods=['GET'])
+    def calibrate():
+        calibrating.value = 1
+        return True
     app.run(debug=True, use_reloader=False, port=8001)
-
-def video_stream(x_joy, y_joy):
     
+    
+def video_stream(x_joy, y_joy, calibrating):
     joystick_x = 0
     joystick_y = 0
 
@@ -58,13 +64,15 @@ def video_stream(x_joy, y_joy):
 
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-    start_time = time.time()
+    start_time = time.time() - 5
 
     calibrated_nod_list = []
     calibrated_nod = 0
     calibrated_tilt_list = []
     calibrated_tilt = 0
 
+    joystick_x = 0
+    joystick_x = 0
     while(True):
         # Capture the video frame
         # by frame
@@ -105,6 +113,11 @@ def video_stream(x_joy, y_joy):
             ratio = ratio_between_points(point_list)[0] #nodding (y)
             difference = difference_between_x_points(point_list) #tilting (x)
 
+            if (calibrating.value):
+                calibrated_nod_list = []
+                calibrated_tilt_list = []
+                start_time = time.time()
+                calibrating.value = 0
             if (time.time() - start_time < 5):
                 calibrated_nod_list.append(ratio)
                 calibrated_nod = np.mean(calibrated_nod_list)
@@ -126,11 +139,13 @@ def video_stream(x_joy, y_joy):
             r = cart_to_polar(joystick_x, joystick_y)[1]
             if r > 1: #if r > 1
                 r = 1
-            print("theta: ")
-            print(theta)
-            print("distance r:")
-            print(r)
-
+            # print("theta: ")
+            # print(theta)
+            # print("distance r:")
+            # print(r)
+        else:
+            y_joy.value = 0
+            x_joy.value = 0
             # Display the resulting frame
         cv2.imshow('frame', frame)
         # plt.cla()
@@ -154,8 +169,9 @@ def video_stream(x_joy, y_joy):
 if __name__ == '__main__':
     x_joy = Value('d', 0.0)
     y_joy = Value('d', 0.0)
-    p1 = Process(target=video_stream, args=(x_joy, y_joy))
-    p2 = Process(target=website, args=(x_joy, y_joy))
+    calibrating = Value('i', 0)
+    p1 = Process(target=video_stream, args=(x_joy, y_joy, calibrating))
+    p2 = Process(target=website, args=(x_joy, y_joy, calibrating))
     p2.start()
     p1.start()
     p2.join()
