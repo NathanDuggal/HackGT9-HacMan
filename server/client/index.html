@@ -43,7 +43,8 @@
 
 
 		function init() {
-            //see which screen to display (start screen or game screen)
+            var z1 = document.getElementById("calibrating");
+            z1.style.display = "none"
             this.toggleScreen('start-screen', false);
             this.toggleScreen('mainCanvas', true);
             // -----------------
@@ -285,13 +286,31 @@
             element.style.display = display;
         }
 
+        function calibrate() {
+            //make button disapear and calibrating text appear
+            var w = document.getElementById("start-screen");
+            w.style.display = "none";
+            var x = document.getElementById("calibrating");
+            x.style.display = "block";
+            //setTimeout(tester, 1000);
+            setTimeout(init, 5000);
+        }
+
 
 
 	</script>
 </head>
 <body>
     <div id='start-screen' class='screen' style='display:block'>
-        <button onclick='init()'>Start Game</button>
+        <button onclick='calibrate()'>Start Game</button>
+    </div>
+    <div id='calibrating' style="display:none">
+        <div class="header">
+            <h1>Calibrating...</h1>
+          </div>
+        <p>Stare at the middle of the screen!</p>
+        <div id = 'dot'>
+        </div>
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
