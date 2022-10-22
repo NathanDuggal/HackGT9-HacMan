@@ -12,9 +12,18 @@ from flask import send_from_directory
 
 
 def difference_between_x_points(points):
-    top_point = points[0] #retrieving from tuple of points (0 through 2)
-    bottom_point = points[2]
-    return top_point[0] - bottom_point[0] #x values of top and bottom points
+    left_point = points[3] #retrieving from tuple of points (0 through 2)
+    middle_point = points[2]
+    right_point = points[4]
+
+    total_face_width = left_point[0] - right_point[0]
+
+    indicator = (right_point[0] - middle_point[0]) / (middle_point[0] - left_point[0]) #normally is 1, 0.3 to 2
+    return indicator
+    #if turning right, small/big = small
+    #if turning left, big/small = big
+
+    #OLD: return top_point[0] - bottom_point[0] #x values of top and bottom points
     
 
 def ratio_between_points(points):
@@ -85,7 +94,8 @@ def video_stream(x_joy, y_joy):
             # Look for the landmarks
             landmarks = predictor(image=gray, box=face)
 
-            points = [8, 33, 27] #bottom, middle, top
+            points = [8, 33, 27, 0, 16] #bottom, middle, top, left(3), right(4)
+            #45, 36 are eye corners
             point_list = []
             for n in points:
                 x = landmarks.part(n).x
@@ -97,7 +107,8 @@ def video_stream(x_joy, y_joy):
 
 
             ratio = ratio_between_points(point_list)[0] #nodding (y)
-            difference = difference_between_x_points(point_list) #tilting (x)
+            difference = difference_between_x_points(point_list) #turning or tilting (!undecided) (x)
+            #print(difference)
 
             if (time.time() - start_time < 5):
                 calibrated_nod_list.append(ratio)
@@ -107,21 +118,18 @@ def video_stream(x_joy, y_joy):
                 calibrated_tilt = np.mean(calibrated_tilt_list)
 
             joystick_y = np.clip((ratio - calibrated_nod) * 4, -1, 1)
-            #print(difference_between_x_points(point_list))
 
-            joystick_x = np.clip((difference - calibrated_tilt)/50, -1, 1)
+            joystick_x = np.clip((difference - calibrated_tilt) * 4, -1, 1) #normally is 1, 0.3 to 2
             y_joy.value = joystick_y
             x_joy.value = joystick_x
+
+            print(joystick_x)
 
             #this also literally doesn't work
             theta = cart_to_polar(joystick_x, joystick_y)[0]
             r = cart_to_polar(joystick_x, joystick_y)[1]
             if r > 1: #if r > 1
                 r = 1
-            print("theta: ")
-            print(theta)
-            print("distance r:")
-            print(r)
 
             # Display the resulting frame
         cv2.imshow('frame', frame)
