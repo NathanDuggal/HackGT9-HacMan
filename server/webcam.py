@@ -41,7 +41,7 @@ def cart_to_polar(x, y): #this literally does not work
     return position
 
 def website(x_joy, y_joy, calibrating):
-    app = Flask(__name__, template_folder='client', static_folder='client/sprites',static_url_path="/sprites")
+    app = Flask(__name__, template_folder='client', static_folder='client/assets/sprites',static_url_path="/assets/sprites")
     @app.route("/")
     def pacman():
         return render_template("index.html")
