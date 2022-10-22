@@ -4,30 +4,36 @@
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
     <script>
 
+        // Screen properties
         const windowWidth = window.screen.width;
         const windowHeight = window.screen.height;
         const mazeWidth = 224;
         const mazeHeight = 248;
 
+        // Keyboard maps
         const keyDownMap = new Map();
         keyDownMap.set("ArrowUp", "pacmanMoveUp");
         keyDownMap.set("ArrowDown", "pacmanMoveDown");
         keyDownMap.set("ArrowRight", "pacmanMoveRight");
         keyDownMap.set("ArrowLeft", "pacmanMoveLeft");
-
         const keyUpMap = new Map();
         keyUpMap.set("ArrowUp", "pacmanIdleUp");
         keyUpMap.set("ArrowDown", "pacmanIdleDown");
         keyUpMap.set("ArrowRight", "pacmanIdleRight");
         keyUpMap.set("ArrowLeft", "pacmanIdleLeft");
+        var mostRecentKey = "ArrowRight";
+        var xVel = 0, yVel = 0;
 
+        // Maze collision map
         const collisonMap = [
             ["RD","RL"]
         ]
-
-        var mostRecentKey = "ArrowRight";
-        var xVel = 0, yVel = 0;
         
+        // Joystick properties
+        const deadThresh = 0.5;
+        var lastAni = "pacmanIdleRight";
+
+        // Instance variables
 		var circle, maze, characters, spriteSheet, stage, sprites = [];
 
 		function init() {
@@ -120,7 +126,8 @@
 			circle = new createjs.Sprite(spriteSheet);
 			setScale(circle);
             sprites.push(circle);
-            circle.y = 500;
+            circle.y = windowHeight/2;
+            circle.x = windowWidth/2;
 
             circle.gotoAndPlay("pacmanIdleRight");
 			
@@ -149,14 +156,61 @@
             } else if (circle.currentAnimation == "pacmanMoveRight") {
                 circle.x += 10;
             } else if (circle.currentAnimation == "pacmanMoveLeft") {
-                circle.x += -10;
+               circle.x += -10;
             }
         }
 
         function tick(event) {
             stage.update(event);
 
-            console.log(circle.currentAnimation);
+            var xmlHttp = new XMLHttpRequest();
+            
+            xmlHttp.open( "GET", "/data", false ); // false for synchronous request
+            xmlHttp.send();
+
+            var x = JSON.parse(xmlHttp.responseText).x_joy;
+            var y = JSON.parse(xmlHttp.responseText).y_joy;
+            
+            // circle.x += 10 * x;
+            // circle.y += -10 * y;
+
+            var newAni;
+            if (Math.abs(x) > deadThresh || Math.abs(y) > deadThresh) {
+                if (Math.abs(x) - Math.abs(y) > -0.5) {
+                    if (x > 0) {
+                        newAni = "pacmanMoveRight";
+                    } else {
+                        newAni = "pacmanMoveLeft";
+                    }
+                } else {
+                    if (y > 0) {
+                        newAni = "pacmanMoveUp";
+                    } else {
+                        newAni = "pacmanMoveDown";
+                    }
+                }
+            } else {
+                newAni = lastAni.replace("Move", "Idle");
+            }
+            if (newAni != lastAni) {
+                circle.gotoAndPlay(newAni);
+            }
+            lastAni = newAni;
+
+            //if (circle.x < 0) {
+            //    circle.x = 0;
+            //}
+            //if (circle.x > windowWidth) {
+            //    circle.x = windowWidth;
+            //}
+
+            //if (circle.y < 0) {
+            //    cricle.y = 0;
+            //}
+            //if (circle.y > windowHeight) {
+            //    circle.y = windowHeight;
+            //}
+
             checkKeys();
         }
 
