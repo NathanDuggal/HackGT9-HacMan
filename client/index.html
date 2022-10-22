@@ -3,23 +3,17 @@
 <head>
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
     <script>
-		
+
+        const windowWidth = window.screen.availWidth;
+        const windowHeight = window.screen.availHeight;
+        
 		var stage, circle, characters;
 
 		function init() {
-
-            var canvas = document.getElementById('mainCanvas');
- 
-            function fullscreen(){
-                var el = document.getElementById('mainCanvas');
- 
-                if(el.webkitRequestFullScreen) {
-                    el.webkitRequestFullScreen();
-                }
-                else {
-                    el.mozRequestFullScreen();
-                }            
-            }
+            
+            // -----------------
+            // Initialize Assets
+            // -----------------
 
             characters = {
                 images: ["sprites/Pacman.png"],
@@ -36,19 +30,51 @@
                 }
             };
 
-            var spriteSheet = new createjs.SpriteSheet(characters);
-            //var animation = new createjs.Sprite(spriteSheet);
- 
-            canvas.addEventListener("click",fullscreen)
+            mazeImage = {
+                images: ["sprites/Maze.png"],
+                frames: {width:224, height:248},
+            };
 
-            canvas.height = window.screen.availHeight;
-            canvas.width = window.screen.availWidth;
+            var spriteSheet = new createjs.SpriteSheet(characters);
+            var mazeSheet = new createjs.SpriteSheet(mazeImage);
+            //var animation = new createjs.Sprite(spriteSheet);
+
+            // -----------------
+            // Setup Canvas
+            // -----------------
+
+            var canvas = document.getElementById('mainCanvas');
+ 
+            function fullscreen(){
+                if(canvas.webkitRequestFullScreen) {
+                    canvas.webkitRequestFullScreen();
+                }
+                else {
+                    canvas.mozRequestFullScreen();
+                }            
+            }
+ 
+            canvas.addEventListener("click",fullscreen);
+
+            canvas.height = windowHeight;
+            canvas.width = windowWidth;
+
+            // -----------------
+            // Setup game loop
+            // -----------------
 
 			stage = new createjs.Stage("mainCanvas");
-			
+
+        
+            maze = new createjs.Sprite(mazeSheet);
+            maze.y = 0;
+            maze.x = windowWidth/2 - maze.width/2;
+
 			circle = new createjs.Sprite(spriteSheet, "pacmanIdleRight");
 			//circle.graphics.beginFill("red").drawCircle(0, 0, 40);
+            circle.setScale
 			circle.y = 50;
+            stage.addChild(maze);
 			stage.addChild(circle);
 			
 			// Stage will pass delta when it calls stage.update(arg)
@@ -56,7 +82,7 @@
 			circle.on("tick", function(event) {
                 //var tickerEvent = event.params[0];
                 //var delta = tickerEvent.delta;
-                circle.x += 100; //delta/1000*100;
+                circle.x += 0; //delta/1000*100;
                 if (circle.x > stage.canvas.width) { circle.x = 0; }
             });
 			
@@ -65,6 +91,10 @@
 
         function tick(event) {
             stage.update(event);
+        }
+
+        function setScale(sprite) {
+            sprite.setTransform(null, null, windowWidth/sprite.width, windowHeight/sprite.height);
         }
 
 	</script>
