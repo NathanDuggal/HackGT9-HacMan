@@ -30,7 +30,6 @@ while(True):
     # by frame
     ret, frame = vid.read()
     scale_percent = 20 # percent of original size
-    scale_percent = 25 # percent of original size
     width = int(frame.shape[1] * scale_percent / 100)
     height = int(frame.shape[0] * scale_percent / 100)
     dim = (width, height)
