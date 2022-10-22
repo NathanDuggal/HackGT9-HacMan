@@ -82,7 +82,7 @@ def video_stream(x_joy, y_joy, calibrating):
         # by frame
 
         ret, frame = vid.read()
-        scale_percent = 50 # percent of original size
+        scale_percent = 25 # percent of original size
         width = int(frame.shape[1] * scale_percent / 100)
         height = int(frame.shape[0] * scale_percent / 100)
         dim = (width, height)
@@ -135,9 +135,10 @@ def video_stream(x_joy, y_joy, calibrating):
                 calibrated_turn_list.append(ratio_x)
                 calibrated_turn = np.mean(calibrated_turn_list)
 
-            joystick_y = np.clip((ratio_y - calibrated_nod) * 4, -1, 1)
-            joystick_x = np.clip((ratio_x - calibrated_turn) * -3, -1, 1)
-            #joystick_x = np.clip((difference - calibrated_tilt) / 0.3, -1, 1)
+            joystick_y = np.clip((ratio_y - calibrated_nod) * 7, -1, 1)
+            joystick_x_turn = np.clip((ratio_x - calibrated_turn) * -3, -1, 1)
+            joystick_x_tilt = np.clip((difference - calibrated_tilt) / 0.3, -1, 1)
+            joystick_x = 0.25 * joystick_x_turn + joystick_x_tilt
 
 
             
@@ -159,10 +160,10 @@ def video_stream(x_joy, y_joy, calibrating):
             x_joy.value = 0
             # Display the resulting frame
         cv2.imshow('frame', frame)
-        # plt.cla()
-        # plt.axis([-1,1,-1,1])
-        # plt.plot([joystick_x], [joystick_y], 'o')
-        # plt.pause(0.001)
+        plt.cla()
+        plt.axis([-1,1,-1,1])
+        plt.plot([joystick_x], [joystick_y], 'o')
+        plt.pause(0.001)
 
         # the 'q' button is set as the
         # quitting button you may use any
