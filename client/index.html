@@ -4,7 +4,7 @@
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
     <script>
 		
-		var stage, circle;
+		var stage, circle, characters;
 
 		function init() {
 
@@ -20,6 +20,24 @@
                     el.mozRequestFullScreen();
                 }            
             }
+
+            characters = {
+                images: ["sprites/Pacman.png"],
+                frames: {width:16, height:16},
+                animations: {
+                    pacmanIdleRight:0,
+                    pacmanMoveRight:[0,1],
+                    pacmanIdleLeft:0,
+                    pacmanMoveLeft:[0,1],
+                    pacmanIdleUp:0,
+                    pacmanMoveUp:[0,1],
+                    pacmanIdleDown:0,
+                    pacmanMoveDown:[0,1],
+                }
+            };
+
+            var spriteSheet = new createjs.SpriteSheet(characters);
+            //var animation = new createjs.Sprite(spriteSheet);
  
             canvas.addEventListener("click",fullscreen)
 
@@ -28,8 +46,8 @@
 
 			stage = new createjs.Stage("mainCanvas");
 			
-			circle = new createjs.Shape();
-			circle.graphics.beginFill("red").drawCircle(0, 0, 40);
+			circle = new createjs.Sprite(spriteSheet, "pacmanIdleRight");
+			//circle.graphics.beginFill("red").drawCircle(0, 0, 40);
 			circle.y = 50;
 			stage.addChild(circle);
 			
