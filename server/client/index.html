@@ -30,10 +30,12 @@
         var xVel = 0, yVel = 0;
 
         // Maze collision map
-        const collisonMap = [
-            ["RD","RL"]
-        ]
-        
+        var collisionMap = 
+        fetch('assets/sprites/array_image.json')
+            .then((response) => response.json())
+            .then((json) => collisionMap = json)
+            .then(e => console.log(collisionMap));
+
         // Joystick properties
         const deadThresh = 0.8;
         var lastAni = "pacmanIdleRight";
@@ -75,9 +77,34 @@
 
             mazeImage = {
                 images: ["assets/sprites/Maze.png"],
-                frames: {width:224, height:248},
+                frames: {width:224, height:248}
             };
 
+            textImage = {
+                images: ["assets/sprites/Text.png"],
+                frames: {width:8, height:8},
+                animations: {
+                    a:1,
+                    b:2,
+                    c:3,
+                    d:4,
+                    e:5,
+                    f:6,
+                    g:7,
+                    h:8,
+                }    
+            }
+
+
+            cv = document.createElement("CANVAS");
+            c = cv.getContext("2d");
+            c.drawImage(new Image("assets/sprites/Maze.png"), 0,0,mazeWidth,mazeHeight);
+    
+            var imgData = c.getImageData(0, 0, mazeWidth, mazeHeight);
+
+            console.log(imgData);
+
+            textSheet = new createjs.SpriteSheet(textImage);
             spriteSheet = new createjs.SpriteSheet(characters);
             mazeSheet = new createjs.SpriteSheet(mazeImage);
             
@@ -135,8 +162,8 @@
 			circle = new createjs.Sprite(spriteSheet);
 			setScale(circle);
             sprites.push(circle);
-            circle.y = windowHeight/2;
-            circle.x = windowWidth/2;
+            circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2;
+            circle.x = windowWidth/2 - circle.scaleX * pacmanSize/2;
 
             circle.gotoAndPlay("pacmanIdleRight");
 			
@@ -144,51 +171,124 @@
             sprites.forEach(sprite => {
                 stage.addChild(sprite);
             });
-			
-			// Stage will pass delta when it calls stage.update(arg)
-			// which will pass them to tick event handlers for us in time based animation.
-			circle.on("tick", function(event) {
-                //var tickerEvent = event.params[0];
-                //var delta = tickerEvent.delta;
-                //circle.x += 25; //delta/1000*100;
-                if (circle.x > stage.canvas.width) { circle.x = 0; }
-            });
-			
-			createjs.Ticker.on("tick", tick);
+
+            //displayMenu();
+            start();
 		}
 
-        function movePacman() {
-            if (circle.currentAnimation == "pacmanMoveUp") {
-                circle.y += -10;
-            } else if (circle.currentAnimation == "pacmanMoveDown") {
-                circle.y += 10;
-            } else if (circle.currentAnimation == "pacmanMoveRight") {
-                circle.x += 10;
-            } else if (circle.currentAnimation == "pacmanMoveLeft") {
-                circle.x += -10;
+        function displayMenu() {
+            console.log('b'.charCodeAt(0) - 97);
+            console.log(makeSpriteString("hi"));
+            //displaySpriteString(100,100,makeSpriteString("hello"));
+            stage.addChild(new Sprite(textSheet, 0));
+            stage.update(null);
+        }
+
+        function makeSpriteString(string) {
+
+            sprites = [];
+
+            while (string.length > 0) {
+                sprites.push(new createjs.Sprite(textSheet, string.charCodeAt(0) - 97));
+                string = string.substring(1);
             }
 
-            var pacmanTopSide = circle.y;
-            var pacmanBottomSide = circle.y + circle.scaleY * pacmanSize;
-            var pacmanLeftSide = circle.x;
-            var pacmanRightSide = circle.x + circle.scaleX * pacmanSize;
+            return sprites;
+        }
+
+        function displaySpriteString(x,y,sprites) {
+            while (sprites.length > 0) {
+                sprites[0].x = x;
+                sprites[0].y = y;
+                stage.addChild(sprites[0]);
+                sprites.splice(0,1);
+                x+=8;
+            }
+        } 
+
+        function start() {
+            // Start game loop
+			createjs.Ticker.on("tick", tick);
+        }
+
+        function movePacman() {
+
+            const beforeX = circle.x;
+            const beforeY = circle.y;
+
+            if (circle.currentAnimation == "pacmanMoveUp") {
+                circle.y += -8;
+            } else if (circle.currentAnimation == "pacmanMoveDown") {
+                circle.y += 8;
+            } else if (circle.currentAnimation == "pacmanMoveRight") {
+                circle.x += 8;
+            } else if (circle.currentAnimation == "pacmanMoveLeft") {
+                circle.x += -8;
+            }
+
+            const pacmanTopSide = circle.y;
+            const pacmanBottomSide = circle.y + circle.scaleY * pacmanSize;
+            const pacmanLeftSide = circle.x;
+            const pacmanRightSide = circle.x + circle.scaleX * pacmanSize;
+
+            console.log("Test-")
+            console.log(circle.x + " " + circle.y)
+
+            var pacmanX = Math.floor((circle.x -windowWidth/2 + circle.scaleX * mazeWidth/2) / circle.scaleX);
+            var pacmanY = Math.floor(circle.y/circle.scaleY);
+
+            console.log(pacmanX + " " + pacmanY)
+
+            var backToX = pacmanX * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
+            var backToY = pacmanY * maze.scaleY;
+
+            console.log(backToX + " " + backToY)
+
+
+            console.log(pacmanX + " " + pacmanY) 
+            console.log(pacmanX + 8 + " " + (pacmanY + 8))
+
+            for (let i = 0; i < collisionMap.length; i++) {
+                for (let ii = 0; ii < collisionMap[0].length; ii++) {
+                    if (collisionMap[i][ii]==1) {
+                        var ctx = canvas.getContext("2d");
+                        ctx.strokeStyle = "#FF0000";
+                        let boxX = ii * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
+                        let boxY = i * maze.scaleY;
+                        //console.log(boxX + " " + boxY)
+                        ctx.fillRect(boxX, boxY, 10, 10);
+                    }
+                }
+            }
+
+            console.log(pacmanX + " " + pacmanY)
+            for (let i = pacmanY; i < pacmanY + 8; i++) {
+                for (let ii = pacmanX; i < pacmanX + 8; ii++) {
+                    if (collisionMap[i][ii] == 1) {
+                        console.log(1);
+                        circle.x = beforeX;
+                        circle.y = beforeY;
+                    }
+                }
+            }
+
+            console.log(circle.x)
 
             // Right side collision
-            if (pacmanRightSide > windowWidth/2 + maze.scaleX * mazeWidth/2) {
-                
-                circle.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - circle.scaleX * pacmanSize;
+            //if (pacmanRightSide > windowWidth/2 + maze.scaleX * mazeWidth/2) {    
+            //    circle.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - circle.scaleX * pacmanSize;
             // Left side collision
-            } else if (pacmanLeftSide < windowWidth/2 - maze.scaleX * mazeWidth/2) {
-                circle.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
-            }
+            //} else if (pacmanLeftSide < windowWidth/2 - maze.scaleX * mazeWidth/2) {
+            //    circle.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
+            //}
 
             // Bottom side collision
-            if (pacmanBottomSide > windowHeight/2 + maze.scaleY * mazeHeight/2) {
-                circle.y = windowHeight/2 + maze.scaleY * mazeHeight/2 - circle.scaleY * pacmanSize;
+            //if (pacmanBottomSide > windowHeight/2 + maze.scaleY * mazeHeight/2) {
+            //    circle.y = windowHeight/2 + maze.scaleY * mazeHeight/2 - circle.scaleY * pacmanSize;
             // Top side collision
-            } else if (pacmanTopSide < windowHeight/2 - maze.scaleY * mazeHeight/2) {
-                circle.y = windowHeight/2 - maze.scaleY * mazeHeight/2;
-            }
+            //} else if (pacmanTopSide < windowHeight/2 - maze.scaleY * mazeHeight/2) {
+            //    circle.y = windowHeight/2 - maze.scaleY * mazeHeight/2;
+            //}
         }
 
         function drawCircle(x, y) {
@@ -203,13 +303,13 @@
             var x = 0;
             var y = 0;
             try {
-                var xmlHttp = new XMLHttpRequest();
+                //var xmlHttp = new XMLHttpRequest();
                 
-                xmlHttp.open( "GET", "/data", false ); // false for synchronous request
-                xmlHttp.send();
+                //xmlHttp.open( "GET", "/data", false ); // false for synchronous request
+                //xmlHttp.send();
 
-                x = JSON.parse(xmlHttp.responseText).x_joy;
-                y = JSON.parse(xmlHttp.responseText).y_joy;
+                //x = JSON.parse(xmlHttp.responseText).x_joy;
+                //y = JSON.parse(xmlHttp.responseText).y_joy;
             } catch (error) {}
 
             if (isFullScreen) {
@@ -270,7 +370,6 @@
             //    circle.y = windowHeight;
             //}
             
-            checkKeys();
             movePacman();
         }
 
