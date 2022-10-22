@@ -15,6 +15,21 @@ predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
 start_time = time.time()
 
+def difference_between_x_points(points):
+    top_point = points[0] #retrieving from tuple of points (0 through 2)
+    bottom_point = points[2]
+    return top_point[0] - bottom_point[0] #x values of top and bottom points
+
+
+# calibrated_tilt_list = []
+# calibrated_tilt = 0
+
+# if time.time() < 5:
+#     calibrated_tilt_list.append(ratio_between_points())
+
+# for n in calibrated_tilt_list:
+#     calibrated_tilt += n
+
 def ratio_between_points(points):
     distances = []
     ratios = []
