@@ -4,10 +4,12 @@
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
     <script>
 
-        const windowWidth = window.screen.availWidth;
-        const windowHeight = window.screen.availHeight;
+        const windowWidth = window.screen.width;
+        const windowHeight = window.screen.height;
+        const mazeWidth = 224;
+        const mazeHeight = 248;
         
-		var stage, circle, characters;
+		var stage, sprites = [];
 
 		function init() {
             
@@ -15,7 +17,7 @@
             // Initialize Assets
             // -----------------
 
-            characters = {
+            var characters = {
                 images: ["sprites/Pacman.png"],
                 frames: {width:16, height:16},
                 animations: {
@@ -30,7 +32,7 @@
                 }
             };
 
-            mazeImage = {
+            var mazeImage = {
                 images: ["sprites/Maze.png"],
                 frames: {width:224, height:248},
             };
@@ -65,17 +67,20 @@
 
 			stage = new createjs.Stage("mainCanvas");
 
-        
-            maze = new createjs.Sprite(mazeSheet);
-            maze.y = 0;
-            maze.x = windowWidth/2 - maze.width/2;
+			var circle = new createjs.Sprite(spriteSheet, "pacmanIdleRight");
+			setScale(circle);
+            sprites.push(circle);
+            circle.y = 500;
 
-			circle = new createjs.Sprite(spriteSheet, "pacmanIdleRight");
-			//circle.graphics.beginFill("red").drawCircle(0, 0, 40);
-            circle.setScale
-			circle.y = 50;
-            stage.addChild(maze);
-			stage.addChild(circle);
+            var maze = new createjs.Sprite(mazeSheet);
+            setScale(maze);
+            sprites.push(maze);
+            maze.y = 0;
+            maze.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
+			
+            sprites.forEach(sprite => {
+                stage.addChild(sprite);
+            });
 			
 			// Stage will pass delta when it calls stage.update(arg)
 			// which will pass them to tick event handlers for us in time based animation.
@@ -94,7 +99,8 @@
         }
 
         function setScale(sprite) {
-            sprite.setTransform(null, null, windowWidth/sprite.width, windowHeight/sprite.height);
+            sprite.scaleY = windowHeight/mazeHeight;
+            sprite.scaleX = sprite.scaleY;
         }
 
 	</script>
