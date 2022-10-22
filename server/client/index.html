@@ -9,6 +9,10 @@
         const windowHeight = window.screen.height;
         const mazeWidth = 224;
         const mazeHeight = 248;
+        const gamepadX = 1240;
+        const gamepadY = 800;
+        const initCircleX = 1290;
+        const initCircleY = 850;
         const pacmanSize = 16;
 
         // Keyboard maps
@@ -35,7 +39,7 @@
         var lastAni = "pacmanIdleRight";
 
         // Instance variables
-		var circle, maze, characters, spriteSheet, stage, sprites = [];
+		var circle, maze, characters, spriteSheet, stage, canvas, ctx, isFullScreen, sprites = [];
 
 
 		function init() {
@@ -83,10 +87,11 @@
             // -----------------
             // Set up canvas and document keylisteners
             // -----------------
+            canvas = document.getElementById('mainCanvas');
+            ctx = canvas.getContext("2d");
 
-            var canvas = document.getElementById('mainCanvas');
- 
             function fullscreen(){
+                isFullScreen = true;
                 if(canvas.webkitRequestFullScreen) {
                     canvas.webkitRequestFullScreen();
                 }
@@ -98,7 +103,7 @@
             canvas.addEventListener("click",fullscreen);
 
             canvas.height = windowHeight;
-            canvas.width = windowWidth;
+            canvas.width = windowWidth; 
 
             document.addEventListener('keydown', (e) => {
                 if (!(typeof keyDownMap.get(e.code) === "undefined") && e.code != mostRecentKey) {
@@ -187,9 +192,15 @@
             }
         }
 
+        function drawCircle(x, y) {
+            ctx.arc(x, y, 20, 0, 2*Math.PI);
+            ctx.fillStyle = "#FF0000";
+            ctx.fill();
+        }
+
         function tick(event) {
             stage.update(event);
-
+            
             var x = 0;
             var y = 0;
             try {
@@ -201,6 +212,23 @@
                 x = JSON.parse(xmlHttp.responseText).x_joy;
                 y = JSON.parse(xmlHttp.responseText).y_joy;
             } catch (error) {}
+
+            if (isFullScreen) {
+                
+                if (canvas.getContext) {
+                    ctx.fillStyle = "rgba(0, 0, 0, 255)";
+                    ctx.clearRect(gamepadX, gamepadY, 100,100);
+                    ctx.beginPath();
+                    ctx.rect(gamepadX, gamepadY, 100, 100);
+                    ctx.fillStyle = "#808080"; 
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(initCircleX + x * 30, initCircleY + y * 30, 20, 0, 2*Math.PI);
+                    ctx.fillStyle = "#FF0000";
+                    ctx.fill();
+                }
+            }
             
             // circle.x += 10 * x;
             // circle.y += -10 * y;
@@ -228,6 +256,22 @@
             }
             lastAni = newAni;
 
+
+            //if (circle.x < 0) {
+            //    circle.x = 0;
+            //}
+            //if (circle.x > windowWidth) {
+            //    circle.x = windowWidth;
+            //}
+
+            //if (circle.y < 0) {
+            //    cricle.y = 0;
+            //}
+            //if (circle.y > windowHeight) {
+            //    circle.y = windowHeight;
+            //}
+            
+            //checkKeys();
             movePacman();
         }
 
