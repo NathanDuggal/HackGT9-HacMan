@@ -12,17 +12,26 @@ detector = dlib.get_frontal_face_detector()
 
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-
-
-
+print(1)
 while(True):
+    print(2)
       
     # Capture the video frame
     # by frame
     ret, frame = vid.read()
-  
+    scale_percent = 10 # percent of original size
+    width = int(frame.shape[1] * scale_percent / 100)
+    height = int(frame.shape[0] * scale_percent / 100)
+    dim = (width, height)
+
+    # resize image
+    frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
+
     gray = cv2.cvtColor(src=frame, code=cv2.COLOR_BGR2GRAY)
+
+    print(gray.shape)
     faces = detector(gray)
+
     if (len(faces) != 0):
         face = faces[0]
         x1 = face.left() # left point
@@ -49,5 +58,6 @@ while(True):
   
 # After the loop release the cap object
 vid.release()
+
 # Destroy all the windows
 cv2.destroyAllWindows()
