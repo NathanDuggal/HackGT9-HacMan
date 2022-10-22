@@ -8,7 +8,7 @@ import time
 from multiprocessing import Process, Value, Array
 from flask import Flask
 from flask import render_template
-
+from flask import send_from_directory
 
 
 def difference_between_x_points(points):
@@ -27,11 +27,15 @@ def ratio_between_points(points):
     return ratios
 
 def website(x_joy, y_joy):
-    app = Flask(__name__, template_folder='client')
+    app = Flask(__name__, template_folder='client', static_folder='client/sprites',static_url_path="/sprites")
     @app.route("/")
-    def hello_world():
+    def pacman():
         return render_template("index.html")
-    app.run(debug=True, use_reloader=False)
+    @app.route("/data")
+    def getdata():
+        return '{{"x_joy":{}, "y_joy":{}}}'.format(x_joy.value,y_joy.value)
+    
+    app.run(debug=True, use_reloader=False, port=8000)
 
 def video_stream(x_joy, y_joy):
 
