@@ -120,7 +120,8 @@
 			circle = new createjs.Sprite(spriteSheet);
 			setScale(circle);
             sprites.push(circle);
-            circle.y = 500;
+            circle.y = windowHeight/2;
+            circle.x = windowWidth/2;
 
             circle.gotoAndPlay("pacmanIdleRight");
 			
@@ -142,22 +143,67 @@
 		}
 
         function checkKeys() {
-            if (circle.currentAnimation == "pacmanMoveUp") {
-                circle.y += -10;
-            } else if (circle.currentAnimation == "pacmanMoveDown") {
-                circle.y += 10;
-            } else if (circle.currentAnimation == "pacmanMoveRight") {
-                circle.x += 10;
-            } else if (circle.currentAnimation == "pacmanMoveLeft") {
-                circle.x += -10;
-            }
+            // if (circle.currentAnimation == "pacmanMoveUp") {
+            //     circle.y += -10;
+            // } else if (circle.currentAnimation == "pacmanMoveDown") {
+            //     circle.y += 10;
+            // } else if (circle.currentAnimation == "pacmanMoveRight") {
+            //     circle.x += 10;
+            // } else if (circle.currentAnimation == "pacmanMoveLeft") {
+            //     circle.x += -10;
+            // }
         }
 
         function tick(event) {
             stage.update(event);
 
+            var xmlHttp = new XMLHttpRequest();
+            
+            xmlHttp.open( "GET", "/data", false ); // false for synchronous request
+            // xmlHttp.responseType = 'json';
+            xmlHttp.send();
+            // console.log(xmlHttp);
+
+            var x = JSON.parse(xmlHttp.responseText).x_joy;
+            var y = JSON.parse(xmlHttp.responseText).y_joy;
+            
+            // circle.x += 10 * x;
+            // circle.y += -10 * y;
+
+            if (Math.abs(x) - Math.abs(y) > -0.5) {
+                if (x > 0) {
+                    circle.gotoAndPlay("pacmanMoveRight");
+                    circle.x += 10;
+                } else {
+                    circle.gotoAndPlay("pacmanMoveLeft");
+                    circle.x += -10;
+                }
+            } else {
+                if (y > 0) {
+                    circle.gotoAndPlay("pacmanMoveUp");
+                    circle.y += -10;
+                } else {
+                    circle.gotoAndPlay("pacmanMoveDown");
+                    circle.y += 10;
+                }
+            }
+
+            if (circle.x < 0) {
+                circle.x = 0;
+            }
+            if (circle.x > windowWidth) {
+                circle.x = windowWidth;
+            }
+
+            if (circle.y < 0) {
+                cricle.y = 0;
+            }
+            if (circle.y > windowHeight) {
+                circle.y = windowHeight;
+            }
+
             console.log(circle.currentAnimation);
-            checkKeys();
+            // checkKeys();
         }
 
         function setScale(sprite) {

@@ -33,7 +33,7 @@ def website(x_joy, y_joy):
         return render_template("index.html")
     @app.route("/data")
     def getdata():
-        return '{{"x_joy":{}, "y_joy":{}}}'.format(x_joy.value,y_joy.value)
+        return '{{"x_joy": {}, "y_joy": {}}}'.format(x_joy.value,y_joy.value)
     
     app.run(debug=True, use_reloader=False, port=8000)
 
