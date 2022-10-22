@@ -51,7 +51,7 @@ def website(x_joy, y_joy, calibrating):
     def calibrate():
         calibrating.value = 1
         return True
-    app.run(debug=True, use_reloader=False, port=8001)
+    app.run(debug=True, use_reloader=False, port=8002)
     
     
 def video_stream(x_joy, y_joy, calibrating):
