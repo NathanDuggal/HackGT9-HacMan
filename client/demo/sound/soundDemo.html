@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script>
+      var soundID = "Thunder";
+
+      function loadSound () {
+        createjs.Sound.registerSound("/Users/angelayu/Documents/school/GTHack/client/demo/sound/thunder.mp3", soundID);
+      }
+
+      function playSound () {
+        createjs.Sound.play(soundID);
+      }
+    </script>
+  </head>
+  <body onload="loadSound();">
+    <button onclick="playSound();" class="playSound">Play Sound</button>
+  </body>
+</html>
