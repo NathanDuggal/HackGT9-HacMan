@@ -70,7 +70,7 @@ def video_stream(x_joy, y_joy):
         # by frame
 
         ret, frame = vid.read()
-        scale_percent = 50 # percent of original size
+        scale_percent = 25 # percent of original size
         width = int(frame.shape[1] * scale_percent / 100)
         height = int(frame.shape[0] * scale_percent / 100)
         dim = (width, height)
@@ -133,10 +133,10 @@ def video_stream(x_joy, y_joy):
 
             # Display the resulting frame
         cv2.imshow('frame', frame)
-        # plt.cla()
-        # plt.axis([-1,1,-1,1])
-        # plt.plot([joystick_x], [joystick_y], 'o')
-        # plt.pause(0.001)
+        plt.cla()
+        plt.axis([-1,1,-1,1])
+        plt.plot([joystick_x], [joystick_y], 'o')
+        plt.pause(0.001)
 
         # the 'q' button is set as the
         # quitting button you may use any
