@@ -14,10 +14,10 @@ import matplotlib
 plt.ion()
 plt.show()
 
-def difference_between_x_points(points):
+def ratio_between_x_points(points):
     top_point = points[0] #retrieving from tuple of points (0 through 2)
     bottom_point = points[2]
-    return top_point[0] - bottom_point[0] #x values of top and bottom points
+    return (top_point[0] - bottom_point[0]) / math.dist(top_point, bottom_point)
     
 
 def ratio_between_points(points):
@@ -100,7 +100,7 @@ def video_stream(x_joy, y_joy):
 
 
             ratio = ratio_between_points(point_list)[0] #nodding (y)
-            difference = difference_between_x_points(point_list) #tilting (x)
+            difference = ratio_between_x_points(point_list) #tilting (x)
 
             if (time.time() - start_time < 5):
                 calibrated_nod_list.append(ratio)
@@ -110,7 +110,7 @@ def video_stream(x_joy, y_joy):
                 calibrated_tilt = np.mean(calibrated_tilt_list)
 
             joystick_y = np.clip((ratio - calibrated_nod) * 4, -1, 1)
-            joystick_x = np.clip((difference - calibrated_tilt)/50, -1, 1)
+            joystick_x = np.clip((difference - calibrated_tilt) / 0.3, -1, 1)
 
             
             
@@ -123,10 +123,10 @@ def video_stream(x_joy, y_joy):
             r = cart_to_polar(joystick_x, joystick_y)[1]
             if r > 1: #if r > 1
                 r = 1
-            print("theta: ")
-            print(theta)
-            print("distance r:")
-            print(r)
+            # print("theta: ")
+            # print(theta)
+            # print("distance r:")
+            # print(r)
 
             # Display the resulting frame
         cv2.imshow('frame', frame)
