@@ -27,8 +27,8 @@ def ratio_between_points(points):
     return ratios
 
 def cart_to_polar(x, y): #this literally does not work
-    theta = np.arctan2(x,y)
-    r = np.sqrt(x**2 + y**2)
+    theta = np.arctan2(y,x) #in radians
+    r = math.sqrt(x**2 + y**2)
     position = [theta, r]
     return position
 
@@ -118,7 +118,9 @@ def video_stream(x_joy, y_joy):
             r = cart_to_polar(joystick_x, joystick_y)[1]
             if r > 1: #if r > 1
                 r = 1
+            print("theta: ")
             print(theta)
+            print("distance r:")
             print(r)
 
             # Display the resulting frame
