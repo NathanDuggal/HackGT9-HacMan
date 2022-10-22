@@ -9,7 +9,10 @@ from multiprocessing import Process, Value, Array
 from flask import Flask
 from flask import render_template
 from flask import send_from_directory
-
+import matplotlib.pyplot as plt
+import matplotlib
+plt.ion()
+plt.show()
 
 def difference_between_x_points(points):
     top_point = points[0] #retrieving from tuple of points (0 through 2)
@@ -41,7 +44,7 @@ def website(x_joy, y_joy):
     def getdata():
         return '{{"x_joy": {}, "y_joy": {}}}'.format(x_joy.value,y_joy.value)
     
-    app.run(debug=True, use_reloader=False, port=8000)
+    app.run(debug=True, use_reloader=False, port=8001)
 
 def video_stream(x_joy, y_joy):
 
@@ -107,9 +110,11 @@ def video_stream(x_joy, y_joy):
                 calibrated_tilt = np.mean(calibrated_tilt_list)
 
             joystick_y = np.clip((ratio - calibrated_nod) * 4, -1, 1)
-            #print(difference_between_x_points(point_list))
-
             joystick_x = np.clip((difference - calibrated_tilt)/50, -1, 1)
+
+            
+            
+
             y_joy.value = joystick_y
             x_joy.value = joystick_x
 
@@ -125,13 +130,17 @@ def video_stream(x_joy, y_joy):
 
             # Display the resulting frame
         cv2.imshow('frame', frame)
-        
+        plt.cla()
+        plt.axis([-1,1,-1,1])
+        plt.plot([joystick_x], [joystick_y], 'o')
+        plt.pause(0.001)
+
         # the 'q' button is set as the
         # quitting button you may use any
         # desired button of your choice
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+        if cv2.waitKey(205) & 0xFF == ord('q'):
             break
-    
+        
     # After the loop release the cap object
     vid.release()
 
