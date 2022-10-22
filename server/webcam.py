@@ -4,7 +4,8 @@ from tkinter import Tk, filedialog
 import os
 import dlib
 import math
-  
+import time
+
 # define a video capture object
 vid = cv2.VideoCapture(0)
 
@@ -12,24 +13,27 @@ detector = dlib.get_frontal_face_detector()
 
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
+start_time = time.time()
 
 def ratio_between_points(points):
     distances = []
     ratios = []
-    for c,point in enumerate(points)[:-1]:
+    for c,point in list(enumerate(points))[:-1]:
         distances.append(math.dist(point, points[c+1]))
-    for c,distance in enumerate(distances)[:-1]:
+    for c,distance in list(enumerate(distances))[:-1]:
         ratios.append(distance / distances[c+1])
     return ratios
 
 
+calibrated_nod_list = []
+calibrated_nod = 0
 
 while(True):
-      
     # Capture the video frame
     # by frame
+
     ret, frame = vid.read()
-    scale_percent = 20 # percent of original size
+    scale_percent = 25 # percent of original size
     width = int(frame.shape[1] * scale_percent / 100)
     height = int(frame.shape[0] * scale_percent / 100)
     dim = (width, height)
@@ -51,12 +55,23 @@ while(True):
         landmarks = predictor(image=gray, box=face)
 
         points = [8, 33, 27] #bottom, middle, top
+        point_list = []
         for n in points:
             x = landmarks.part(n).x
             y = landmarks.part(n).y
+            point_list.append((x,y))
 
             # Draw a circle
             cv2.circle(img=frame, center=(x, y), radius=10, color=(0, 255, 0), thickness=-1)
+
+
+        ratio = ratio_between_points(point_list)[0]
+        if (time.time() - start_time < 5):
+            calibrated_nod_list.append(ratio)
+            calibrated_nod = np.mean(calibrated_nod_list)
+
+        joystick_y = np.clip((ratio - calibrated_nod) * 4, -1, 1)
+        print(joystick_y)
 
         # Display the resulting frame
     cv2.imshow('frame', frame)
