@@ -14,10 +14,10 @@ import matplotlib
 from flask import Flask, request, jsonify
 from PIL import Image
 
-#plt.ion()
-#plt.show()
-plt.ion()
-plt.show()
+NOD_SCALE = 7
+TURN_SCALE = -3
+TILT_SCALE = 1.0/0.3
+WINK_THRESH = 0.05
 
 #gets head tilt
 def ratio_between_x_points(points):
@@ -36,6 +36,7 @@ def ratio_between_points(points):
         ratios.append(distance / distances[c+1])
     return ratios
 
+#ratio of how open your right eye is
 def wink_ratio(points):
     return math.dist(points[5], points[6]) / math.dist(points[0], points[2])
 
@@ -60,54 +61,43 @@ def website(x_joy, y_joy, calibrating, wink):
         return "ok"
     app.run(debug=True, use_reloader=False, port=8004)
     
-    
 def video_stream(x_joy, y_joy, calibrating, wink):
     joystick_x = 0
     joystick_y = 0
 
     # define a video capture object
     vid = cv2.VideoCapture(0)
-
     detector = dlib.get_frontal_face_detector()
-
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-
     start_time = time.time() - 5
 
-    calibrated_nod_list = []
-    calibrated_nod = 0
-    calibrated_tilt_list = []
-    calibrated_tilt = 0
-    calibrated_turn_list = []
-    calibrated_turn = 0
+    calibrated_nod_list, calibrated_tilt_list, calibrated_turn_list = [], [], []
+    calibrated_nod, calibrated_tilt, calibrated_turn = 0,0,0
 
     joystick_x = 0
     joystick_y = 0
 
     while(True):
-        # Capture the video frame
-        # by frame
+        # Capture the video frame by frame
 
         ret, frame = vid.read()
 
+        # checks if frame is actually read
         if (not isinstance(frame, type(None))):
-            scale_percent = 25 # percent of original size
+            # scale image down
+            scale_percent = 25
             width = int(frame.shape[1] * scale_percent / 100)
             height = int(frame.shape[0] * scale_percent / 100)
             dim = (width, height)
-
-            # resize image
             frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
 
+            #convert to grayscale and detect faces
             gray = cv2.cvtColor(src=frame, code=cv2.COLOR_BGR2GRAY)
             faces = detector(gray)
 
             if (len(faces) != 0):
+                #get the first face you see
                 face = faces[0]
-                x1 = face.left() # left point
-                y1 = face.top() # top point
-                x2 = face.right() # right point
-                y2 = face.bottom() # bottom point
 
                 # Look for the landmarks
                 landmarks = predictor(image=gray, box=face)
@@ -118,22 +108,22 @@ def video_stream(x_joy, y_joy, calibrating, wink):
                     x = landmarks.part(n).x
                     y = landmarks.part(n).y
                     point_list.append((x,y))
-
-                    # Draw a circle
+                    # plot the point features we use
                     cv2.circle(img=frame, center=(x, y), radius=10, color=(0, 255, 0), thickness=-1)
 
 
                 ratio_y = ratio_between_points(point_list)[0] #nodding (y)
-                ratio_x = ratio_between_points([point_list[3],point_list[2],point_list[4]])[0]
-                ratio_wink = wink_ratio(point_list)
+                ratio_x = ratio_between_points([point_list[3],point_list[2],point_list[4]])[0] #turning (x)
                 difference = ratio_between_x_points(point_list) #tilting (x)
-
+                ratio_wink = wink_ratio(point_list) #winking
+                
+                # if we are calibrating, reset time and calibration
                 if (calibrating.value):
-                    calibrated_nod_list = []
-                    calibrated_tilt_list = []
-                    calibrated_turn_list = []
+                    calibrated_nod_list, calibrated_tilt_list, calibrated_turn_list = [], [], []
                     start_time = time.time()
                     calibrating.value = 0
+                
+                # average ratios to create a face calibration for 5 seconds
                 if (time.time() - start_time < 5):
                     calibrated_nod_list.append(ratio_y)
                     calibrated_nod = np.mean(calibrated_nod_list)
@@ -144,33 +134,32 @@ def video_stream(x_joy, y_joy, calibrating, wink):
                     calibrated_turn_list.append(ratio_x)
                     calibrated_turn = np.mean(calibrated_turn_list)
 
-                joystick_y = np.clip((ratio_y - calibrated_nod) * 7, -1, 1)
-                joystick_x_turn = np.clip((ratio_x - calibrated_turn) * -3, -1, 1)
-                joystick_x_tilt = np.clip((difference - calibrated_tilt) / 0.3, -1, 1)
+                joystick_y = np.clip((ratio_y - calibrated_nod) * NOD_SCALE, -1, 1)
+                joystick_x_turn = np.clip((ratio_x - calibrated_turn) * TURN_SCALE, -1, 1)
+                joystick_x_tilt = np.clip((difference - calibrated_tilt) * TILT_SCALE, -1, 1)
+
+                # we use 25% of the turn and 100% of the tilt of the head for the x
                 joystick_x = 0.25 * joystick_x_turn + joystick_x_tilt
-                is_wink = ratio_wink < 0.05
-                print(is_wink)
-                
+
+                is_wink = ratio_wink < WINK_THRESH
 
                 y_joy.value = joystick_y
                 x_joy.value = joystick_x
                 wink.value = is_wink
 
                 #convert to polar (not implemented)
-                theta = cart_to_polar(joystick_x, joystick_y)[0]
-                r = cart_to_polar(joystick_x, joystick_y)[1]
-                if r > 1: #if r > 1
-                    r = 1
-
+                # theta = cart_to_polar(joystick_x, joystick_y)[0]
+                # r = cart_to_polar(joystick_x, joystick_y)[1]
+                # if r > 1: #if r > 1
+                #     r = 1
+            # if no frames, just set to 0    
             else:
                 y_joy.value = 0
                 x_joy.value = 0
-                # Display the resulting frame
+
             cv2.imshow('frame', frame)
 
-            # the 'q' button is set as the
-            # quitting button you may use any
-            # desired button of your choice
+            # the 'q' button is set as the quitting button you may use any
             if cv2.waitKey(205) & 0xFF == ord('q'):
                 break
             

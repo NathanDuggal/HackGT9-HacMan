@@ -249,22 +249,22 @@
             console.log(pacmanX + " " + pacmanY) 
             console.log(pacmanX + 8 + " " + (pacmanY + 8))
 
-            for (let i = 0; i < collisionMap.length; i++) {
-                for (let ii = 0; ii < collisionMap[0].length; ii++) {
-                    if (collisionMap[i][ii]==1) {
-                        var ctx = canvas.getContext("2d");
-                        ctx.strokeStyle = "#FF0000";
-                        let boxX = ii * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
-                        let boxY = i * maze.scaleY;
-                        //console.log(boxX + " " + boxY)
-                        ctx.fillRect(boxX, boxY, 10, 10);
-                    }
-                }
-            }
+            // for (let i = 0; i < collisionMap.length; i++) {
+            //     for (let ii = 0; ii < collisionMap[0].length; ii++) {
+            //         if (collisionMap[i][ii]==1) {
+            //             var ctx = canvas.getContext("2d");
+            //             ctx.strokeStyle = "#FF0000";
+            //             let boxX = ii * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
+            //             let boxY = i * maze.scaleY;
+            //             //console.log(boxX + " " + boxY)
+            //             ctx.fillRect(boxX, boxY, 10, 10);
+            //         }
+            //     }
+            // }
 
             console.log(pacmanX + " " + pacmanY)
             for (let i = pacmanY; i < pacmanY + 8; i++) {
-                for (let ii = pacmanX; i < pacmanX + 8; ii++) {
+                for (let ii = pacmanX; ii < pacmanX + 8; ii++) {
                     if (collisionMap[i][ii] == 1) {
                         console.log(1);
                         circle.x = beforeX;
@@ -304,13 +304,13 @@
             var x = 0;
             var y = 0;
             try {
-                //var xmlHttp = new XMLHttpRequest();
+                var xmlHttp = new XMLHttpRequest();
                 
-                //xmlHttp.open( "GET", "/data", false ); // false for synchronous request
-                //xmlHttp.send();
+                xmlHttp.open( "GET", "/data", false ); // false for synchronous request
+                xmlHttp.send();
 
-                //x = JSON.parse(xmlHttp.responseText).x_joy;
-                //y = JSON.parse(xmlHttp.responseText).y_joy;
+                x = JSON.parse(xmlHttp.responseText).x_joy;
+                y = JSON.parse(xmlHttp.responseText).y_joy;
             } catch (error) {}
 
             if (isFullScreen) {
