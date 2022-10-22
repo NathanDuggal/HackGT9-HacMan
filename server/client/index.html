@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+    <script>
+
+        const windowWidth = window.screen.width;
+        const windowHeight = window.screen.height;
+        const mazeWidth = 224;
+        const mazeHeight = 248;
+
+        const keyDownMap = new Map();
+        keyDownMap.set("ArrowUp", "pacmanMoveUp");
+        keyDownMap.set("ArrowDown", "pacmanMoveDown");
+        keyDownMap.set("ArrowRight", "pacmanMoveRight");
+        keyDownMap.set("ArrowLeft", "pacmanMoveLeft");
+
+        const keyUpMap = new Map();
+        keyUpMap.set("ArrowUp", "pacmanIdleUp");
+        keyUpMap.set("ArrowDown", "pacmanIdleDown");
+        keyUpMap.set("ArrowRight", "pacmanIdleRight");
+        keyUpMap.set("ArrowLeft", "pacmanIdleLeft");
+
+        const collisonMap = [
+            ["RD","RL"]
+        ]
+
+        var mostRecentKey = "ArrowRight";
+        var xVel = 0, yVel = 0;
+        
+		var circle, maze, characters, spriteSheet, stage, sprites = [];
+
+		function init() {
+            
+            // -----------------
+            // Initialize Assets
+            // -----------------
+
+            characters = {
+                images: ["sprites/Pacman.png"],
+                frames: {width:16, height:16},
+                animations: {
+                    pacmanIdleRight:0,
+                    pacmanMoveRight:{
+                        frames: [0,1,2]
+                    },
+                    pacmanIdleLeft:14,
+                    pacmanMoveLeft:{
+                        frames: [14,15,2]
+                    },
+                    pacmanIdleUp:28,
+                    pacmanMoveUp:{
+                        frames: [28,29,2]
+                    },
+                    pacmanIdleDown:42,
+                    pacmanMoveDown:{
+                        frames: [42,43,2]
+                    }
+                }
+            };
+
+            mazeImage = {
+                images: ["sprites/Maze.png"],
+                frames: {width:224, height:248},
+            };
+
+            spriteSheet = new createjs.SpriteSheet(characters);
+            mazeSheet = new createjs.SpriteSheet(mazeImage);
+            
+            //var animation = new createjs.Sprite(spriteSheet);
+
+            // -----------------
+            // Set up canvas and document keylisteners
+            // -----------------
+
+            var canvas = document.getElementById('mainCanvas');
+ 
+            function fullscreen(){
+                if(canvas.webkitRequestFullScreen) {
+                    canvas.webkitRequestFullScreen();
+                }
+                else {
+                    canvas.mozRequestFullScreen();
+                }            
+            }
+ 
+            canvas.addEventListener("click",fullscreen);
+
+            canvas.height = windowHeight;
+            canvas.width = windowWidth;
+
+            document.addEventListener('keydown', (e) => {
+                if (!(typeof keyDownMap.get(e.code) === "undefined") && e.code != mostRecentKey) {
+                    circle.gotoAndPlay(keyDownMap.get(e.code));
+                }
+                mostRecentKey = e.code;
+            });
+
+            document.addEventListener('keyup', (e) => {
+                if (!(typeof keyUpMap.get(e.code) === "undefined")) {
+                    circle.gotoAndPlay(keyUpMap.get(e.code));
+                }
+                mostRecentKey = null;
+            });
+
+            // -----------------
+            // Set up game loop
+            // -----------------
+
+			stage = new createjs.Stage("mainCanvas");
+
+            // Background
+            maze = new createjs.Sprite(mazeSheet);
+            setScale(maze);
+            sprites.push(maze);
+            maze.y = 0;
+            maze.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
+
+            // Pacman
+			circle = new createjs.Sprite(spriteSheet);
+			setScale(circle);
+            sprites.push(circle);
+            circle.y = 500;
+
+            circle.gotoAndPlay("pacmanIdleRight");
+			
+            // 
+            sprites.forEach(sprite => {
+                stage.addChild(sprite);
+            });
+			
+			// Stage will pass delta when it calls stage.update(arg)
+			// which will pass them to tick event handlers for us in time based animation.
+			circle.on("tick", function(event) {
+                //var tickerEvent = event.params[0];
+                //var delta = tickerEvent.delta;
+                //circle.x += 25; //delta/1000*100;
+                if (circle.x > stage.canvas.width) { circle.x = 0; }
+            });
+			
+			createjs.Ticker.on("tick", tick);
+		}
+
+        function checkKeys() {
+            if (circle.currentAnimation == "pacmanMoveUp") {
+                circle.y += -10;
+            } else if (circle.currentAnimation == "pacmanMoveDown") {
+                circle.y += 10;
+            } else if (circle.currentAnimation == "pacmanMoveRight") {
+                circle.x += 10;
+            } else if (circle.currentAnimation == "pacmanMoveLeft") {
+                circle.x += -10;
+            }
+        }
+
+        function tick(event) {
+            stage.update(event);
+
+            console.log(circle.currentAnimation);
+            checkKeys();
+        }
+
+        function setScale(sprite) {
+            sprite.scaleY = windowHeight/mazeHeight;
+            sprite.scaleX = sprite.scaleY;
+        }
+
+	</script>
+</head>
+<body onload="init();">
+    <canvas id="mainCanvas" width="500" height="300">
+        alternate content
+    </canvas>
+</body>
+</html>
