@@ -26,6 +26,12 @@ def ratio_between_points(points):
         ratios.append(distance / distances[c+1])
     return ratios
 
+def cart_to_polar(x, y): #this literally does not work
+    theta = np.arctan2(x,y)
+    r = np.sqrt(x**2 + y**2)
+    position = [theta, r]
+    return position
+
 def website(x_joy, y_joy):
     app = Flask(__name__, template_folder='client', static_folder='client/sprites',static_url_path="/sprites")
     @app.route("/")
@@ -106,6 +112,14 @@ def video_stream(x_joy, y_joy):
             joystick_x = np.clip((difference - calibrated_tilt)/50, -1, 1)
             y_joy.value = joystick_y
             x_joy.value = joystick_x
+
+            #this also literally doesn't work
+            theta = cart_to_polar(joystick_x, joystick_y)[0]
+            r = cart_to_polar(joystick_x, joystick_y)[1]
+            if r > 1: #if r > 1
+                r = 1
+            print(theta)
+            print(r)
 
             # Display the resulting frame
         cv2.imshow('frame', frame)
