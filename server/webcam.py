@@ -15,6 +15,7 @@ from flask import Flask, request, jsonify
 
 plt.ion()
 plt.show()
+#test
 
 #gets head tilt
 def ratio_between_x_points(points):
@@ -146,15 +147,12 @@ def video_stream(x_joy, y_joy, calibrating):
             y_joy.value = joystick_y
             x_joy.value = joystick_x
 
-            #this also literally doesn't work
+            #convert to polar (not implemented)
             theta = cart_to_polar(joystick_x, joystick_y)[0]
             r = cart_to_polar(joystick_x, joystick_y)[1]
             if r > 1: #if r > 1
                 r = 1
-            # print("theta: ")
-            # print(theta)
-            # print("distance r:")
-            # print(r)
+
         else:
             y_joy.value = 0
             x_joy.value = 0
