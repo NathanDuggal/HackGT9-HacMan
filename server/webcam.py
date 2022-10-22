@@ -34,20 +34,24 @@ def ratio_between_points(points):
         ratios.append(distance / distances[c+1])
     return ratios
 
+def wink_ratio(points):
+    return math.dist(points[5], points[6]) / math.dist(points[0], points[2])
+
+
 def cart_to_polar(x, y): #this literally does not work
     theta = np.arctan2(y,x) #in radians
     r = math.sqrt(x**2 + y**2)
     position = [theta, r]
     return position
 
-def website(x_joy, y_joy, calibrating):
+def website(x_joy, y_joy, calibrating, wink):
     app = Flask(__name__, template_folder='client', static_folder='client/assets/sprites',static_url_path="/assets/sprites")
     @app.route("/")
     def pacman():
         return render_template("index.html")
     @app.route("/data")
     def getdata():
-        return '{{"x_joy": {}, "y_joy": {}}}'.format(x_joy.value,y_joy.value)
+        return '{{"x_joy": {}, "y_joy": {}, "wink": {}}}'.format(x_joy.value,y_joy.value, wink.value)
     @app.route("/calibrate", methods=['GET'])
     def calibrate():
         calibrating.value = 1
@@ -55,7 +59,7 @@ def website(x_joy, y_joy, calibrating):
     app.run(debug=True, use_reloader=False, port=8001)
     
     
-def video_stream(x_joy, y_joy, calibrating):
+def video_stream(x_joy, y_joy, calibrating, wink):
     joystick_x = 0
     joystick_y = 0
 
@@ -104,7 +108,7 @@ def video_stream(x_joy, y_joy, calibrating):
             # Look for the landmarks
             landmarks = predictor(image=gray, box=face)
 
-            points = [8, 33, 27, 0, 16] #bottom, middle, top, left, right
+            points = [8, 33, 27, 0, 16, 44, 46] #bottom, middle, top, left, right, eye top, eye bottom
             point_list = []
             for n in points:
                 x = landmarks.part(n).x
@@ -117,7 +121,7 @@ def video_stream(x_joy, y_joy, calibrating):
 
             ratio_y = ratio_between_points(point_list)[0] #nodding (y)
             ratio_x = ratio_between_points([point_list[3],point_list[2],point_list[4]])[0]
-
+            ratio_wink = wink_ratio(point_list)
             difference = ratio_between_x_points(point_list) #tilting (x)
 
             if (calibrating.value):
@@ -140,12 +144,13 @@ def video_stream(x_joy, y_joy, calibrating):
             joystick_x_turn = np.clip((ratio_x - calibrated_turn) * -3, -1, 1)
             joystick_x_tilt = np.clip((difference - calibrated_tilt) / 0.3, -1, 1)
             joystick_x = 0.25 * joystick_x_turn + joystick_x_tilt
-
-
+            is_wink = ratio_wink < 0.05
+            print(is_wink)
             
 
             y_joy.value = joystick_y
             x_joy.value = joystick_x
+            wink.value = is_wink
 
             #convert to polar (not implemented)
             theta = cart_to_polar(joystick_x, joystick_y)[0]
@@ -179,9 +184,10 @@ def video_stream(x_joy, y_joy, calibrating):
 if __name__ == '__main__':
     x_joy = Value('d', 0.0)
     y_joy = Value('d', 0.0)
+    wink = Value('i', 0)
     calibrating = Value('i', 1)
-    p1 = Process(target=video_stream, args=(x_joy, y_joy, calibrating))
-    p2 = Process(target=website, args=(x_joy, y_joy, calibrating))
+    p1 = Process(target=video_stream, args=(x_joy, y_joy, calibrating, wink))
+    p2 = Process(target=website, args=(x_joy, y_joy, calibrating, wink))
     p2.start()
     p1.start()
     p2.join()
