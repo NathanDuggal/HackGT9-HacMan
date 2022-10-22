@@ -16,6 +16,8 @@ from PIL import Image
 
 #plt.ion()
 #plt.show()
+plt.ion()
+plt.show()
 
 #gets head tilt
 def ratio_between_x_points(points):
@@ -165,10 +167,6 @@ def video_stream(x_joy, y_joy, calibrating, wink):
                 x_joy.value = 0
                 # Display the resulting frame
             cv2.imshow('frame', frame)
-            plt.cla()
-            plt.axis([-1,1,-1,1])
-            plt.plot([joystick_x], [joystick_y], 'o')
-            plt.pause(0.001)
 
             # the 'q' button is set as the
             # quitting button you may use any
@@ -176,11 +174,11 @@ def video_stream(x_joy, y_joy, calibrating, wink):
             if cv2.waitKey(205) & 0xFF == ord('q'):
                 break
             
-        # After the loop release the cap object
-        vid.release()
+    # After the loop release the cap object
+    vid.release()
 
-        # Destroy all the windows
-        cv2.destroyAllWindows()
+    # Destroy all the windows
+    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
