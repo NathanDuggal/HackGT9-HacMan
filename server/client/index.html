@@ -36,8 +36,11 @@
         // Instance variables
 		var circle, maze, characters, spriteSheet, stage, sprites = [];
 
+
 		function init() {
-            
+            //see which screen to display (start screen or game screen)
+            this.toggleScreen('start-screen', false);
+            this.toggleScreen('mainCanvas', true);
             // -----------------
             // Initialize Assets
             // -----------------
@@ -219,10 +222,26 @@
             sprite.scaleX = sprite.scaleY;
         }
 
+        //KOT
+        function startGame() {
+            init();
+        }
+
+        function toggleScreen(id, toggle) {
+            let element = document.getElementById(id);
+            let display = (toggle) ? 'block' : 'none';
+            element.style.display = display;
+        }
+
+
+
 	</script>
 </head>
-<body onload="init();">
-    <canvas id="mainCanvas" width="500" height="300">
+<body>
+    <div id='start-screen' class='screen' style='display:block'>
+        <button onclick='startGame()'>Start Game</button>
+    </div>
+    <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
     </canvas>
 </body>

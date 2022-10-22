@@ -12,10 +12,15 @@ from flask import send_from_directory
 import matplotlib.pyplot as plt
 import matplotlib
 from flask import Flask, request, jsonify
+from PIL import Image
 
 plt.ion()
 plt.show()
-#test
+
+#get pixel colors
+im = Image.open('client/sprites/Maze.png')
+width, height = im.size
+pixel_values = list(im.getdata())
 
 #gets head tilt
 def ratio_between_x_points(points):
