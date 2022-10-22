@@ -14,13 +14,8 @@ import matplotlib
 from flask import Flask, request, jsonify
 from PIL import Image
 
-plt.ion()
-plt.show()
-
-#get pixel colors
-im = Image.open('client/sprites/Maze.png')
-width, height = im.size
-pixel_values = list(im.getdata())
+#plt.ion()
+#plt.show()
 
 #gets head tilt
 def ratio_between_x_points(points):
@@ -61,7 +56,7 @@ def website(x_joy, y_joy, calibrating, wink):
     def calibrate():
         calibrating.value = 1
         return True
-    app.run(debug=True, use_reloader=False, port=8002)
+    app.run(debug=True, use_reloader=False, port=8004)
     
     
 def video_stream(x_joy, y_joy, calibrating, wink):
@@ -93,7 +88,7 @@ def video_stream(x_joy, y_joy, calibrating, wink):
 
         ret, frame = vid.read()
 
-        if (frame != None):
+        if (not isinstance(frame, type(None))):
             scale_percent = 25 # percent of original size
             width = int(frame.shape[1] * scale_percent / 100)
             height = int(frame.shape[0] * scale_percent / 100)
