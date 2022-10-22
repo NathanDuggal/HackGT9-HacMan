@@ -189,13 +189,13 @@
             var x = 0;
             var y = 0;
             try {
-                //var xmlHttp = new XMLHttpRequest();
+                var xmlHttp = new XMLHttpRequest();
                 
-                //xmlHttp.open( "GET", "/data", false ); // false for synchronous request
-                //xmlHttp.send();
+                xmlHttp.open( "GET", "/data", false ); // false for synchronous request
+                xmlHttp.send();
 
-                //x = JSON.parse(xmlHttp.responseText).x_joy;
-                //y = JSON.parse(xmlHttp.responseText).y_joy;
+                x = JSON.parse(xmlHttp.responseText).x_joy;
+                y = JSON.parse(xmlHttp.responseText).y_joy;
             } catch (error) {}
             
             // circle.x += 10 * x;
