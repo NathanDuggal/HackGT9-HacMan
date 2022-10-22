@@ -235,11 +235,6 @@
             sprite.scaleX = sprite.scaleY;
         }
 
-        //KOT
-        function startGame() {
-            init();
-        }
-
         function toggleScreen(id, toggle) {
             let element = document.getElementById(id);
             let display = (toggle) ? 'block' : 'none';
@@ -252,7 +247,7 @@
 </head>
 <body>
     <div id='start-screen' class='screen' style='display:block'>
-        <button onclick='startGame()'>Start Game</button>
+        <button onclick='init()'>Start Game</button>
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
