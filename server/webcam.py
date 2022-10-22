@@ -19,16 +19,7 @@ def difference_between_x_points(points):
     top_point = points[0] #retrieving from tuple of points (0 through 2)
     bottom_point = points[2]
     return top_point[0] - bottom_point[0] #x values of top and bottom points
-
-
-# calibrated_tilt_list = []
-# calibrated_tilt = 0
-
-# if time.time() < 5:
-#     calibrated_tilt_list.append(ratio_between_points())
-
-# for n in calibrated_tilt_list:
-#     calibrated_tilt += n
+    
 
 def ratio_between_points(points):
     distances = []
@@ -42,6 +33,8 @@ def ratio_between_points(points):
 
 calibrated_nod_list = []
 calibrated_nod = 0
+calibrated_tilt_list = []
+calibrated_tilt = 0
 
 while(True):
     # Capture the video frame
@@ -80,13 +73,21 @@ while(True):
             cv2.circle(img=frame, center=(x, y), radius=10, color=(0, 255, 0), thickness=-1)
 
 
-        ratio = ratio_between_points(point_list)[0]
+        ratio = ratio_between_points(point_list)[0] #nodding (y)
+        difference = difference_between_x_points(point_list) #tilting (x)
+
         if (time.time() - start_time < 5):
             calibrated_nod_list.append(ratio)
             calibrated_nod = np.mean(calibrated_nod_list)
 
+            calibrated_tilt_list.append(difference)
+            calibrated_tilt = np.mean(calibrated_tilt_list)
+
         joystick_y = np.clip((ratio - calibrated_nod) * 4, -1, 1)
-        print(joystick_y)
+        #print(difference_between_x_points(point_list))
+
+        joystick_x = np.clip((difference - calibrated_tilt)/50, -1, 1)
+        print(joystick_x)
 
         # Display the resulting frame
     cv2.imshow('frame', frame)
