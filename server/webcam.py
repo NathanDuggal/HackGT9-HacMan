@@ -17,11 +17,6 @@ from PIL import Image
 plt.ion()
 plt.show()
 
-#get pixel colors
-im = Image.open('client/sprites/Maze.png')
-width, height = im.size
-pixel_values = list(im.getdata())
-
 #gets head tilt
 def ratio_between_x_points(points):
     top_point = points[0] #retrieving from tuple of points (0 through 2)
@@ -93,7 +88,7 @@ def video_stream(x_joy, y_joy, calibrating, wink):
 
         ret, frame = vid.read()
 
-        if (frame != None):
+        if (not isinstance(frame, type(None))):
             scale_percent = 25 # percent of original size
             width = int(frame.shape[1] * scale_percent / 100)
             height = int(frame.shape[0] * scale_percent / 100)
