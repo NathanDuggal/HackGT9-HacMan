@@ -163,7 +163,7 @@
 			circle = new createjs.Sprite(spriteSheet);
 			setScale(circle);
             sprites.push(circle);
-            circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2;
+            circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2 + 4;
             circle.x = windowWidth/2 - circle.scaleX * pacmanSize/2;
 
             circle.gotoAndPlay("pacmanIdleRight");
@@ -263,9 +263,9 @@
             // }
 
             console.log(pacmanX + " " + pacmanY)
-            for (let i = pacmanY; i < pacmanY + 8; i++) {
-                for (let ii = pacmanX; ii < pacmanX + 8; ii++) {
-                    if (collisionMap[i][ii] == 1) {
+            for (let i = pacmanY + 2; i < pacmanY + 14; i++) {
+                for (let ii = pacmanX + 2; ii < pacmanX + 14; ii++) {
+                    if (i >= 0 && ii >=0 && collisionMap[i][ii] == 1) {
                         console.log(1);
                         circle.x = beforeX;
                         circle.y = beforeY;
