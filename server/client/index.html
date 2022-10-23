@@ -64,6 +64,7 @@
             ctx, 
             isFullScreen,
             score, 
+            chomp,
             smallDots = [], 
             bigDots = [], 
             characters = [];
@@ -91,11 +92,13 @@
             // -----------------
 
             loadSound();
-            isBackgroundPlaying = false;
             isJojiPlaying = false;
             isDead = false;
             anim_speed = 0.1
             score = 0;
+
+            var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5})
+            background = createjs.Sound.play("backgroundMusic", backgroundProps);
 
             characterImage = {
                 images: ["assets/sprites/Pacman.png"],
@@ -584,6 +587,10 @@
             let x = 0;
             let y = 0;
 
+            if (life <= 0) {
+                isDead = true;
+            }
+
             try {
                 //throw new Error();
                 var xmlHttp = new XMLHttpRequest();
@@ -597,12 +604,6 @@
             } catch (error) {}
 
             if (isFullScreen) {
-                
-                if (!isBackgroundPlaying) {
-                    var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5})
-                    background = createjs.Sound.play("backgroundMusic", backgroundProps);
-                    isBackgroundPlaying = true;
-                }
                 
                 if(isDead && !isJojiPlaying) {
                     var jojiProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.8})
@@ -626,9 +627,11 @@
                     ctx.fillStyle = "#c90294";
                     ctx.fill();
 
-                    console.log(score);
                     ctx.font = "30px pixelation";
-                    ctx.fillText("Score: " + score, gamepadX, 100);
+                    ctx.fillText("Lives: " + lives, gamepadX, 100);
+
+                    ctx.font = "30px pixelation";
+                    ctx.fillText("Score: " + score, gamepadX, 200);
                 }
             }
             
@@ -716,7 +719,7 @@
                 if (spriteIntersects(circle, pacmanSize, dot, 2)) {
                     smallDots.splice(i,1);
                     stage.removeChild(dot);
-                    createjs.Sound.play("chomp");
+                    chomp = createjs.Sound.play("chomp");
                     score += 20;
                 }
             }
@@ -727,6 +730,10 @@
             for (let i = 0; i < ghosts.length; i++) {
                 if (spriteIntersects(ghosts[i], pacmanSize, circle, pacmanSize)) {
                     collided = true;
+                    //chomp.paused = true;
+                    createjs.Sound.play("death");
+                    score -= 50;
+                    life--;
                 }
             }
             if (collided) {
