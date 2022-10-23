@@ -592,9 +592,6 @@
                 }
             }
 
-            // circle.x += 10 * x;
-            // circle.y += -10 * y;
-
             var newAni;
             if (Math.abs(x) > deadThresh || Math.abs(y) > deadThresh) {
                 if (Math.abs(x) - Math.abs(y) > -0.5) {
@@ -614,21 +611,21 @@
                 if (circle.lastAni != undefined) {
                     newAni = circle.lastAni.replace("Move", "Idle");
                 }
-                if (newAni != circle.lastAni) {
-                    circle.gotoAndPlay(newAni);
-                }
-                circle.lastAni = newAni;
-
-                ghosts = [blue, red, orange, pink]
-                ghosts.forEach(a => (moveGhost(a)))
-                checkGhosts(ghosts)
-                movePacman();
-                checkDots();
-                moveGhost(blue);
-                moveGhost(red);
-                moveGhost(orange);
-                moveGhost(pink);
             }
+            if (newAni != circle.lastAni) {
+                circle.gotoAndPlay(newAni);
+            }
+            circle.lastAni = newAni;
+
+            ghosts = [blue, red, orange, pink]
+            ghosts.forEach(a => (moveGhost(a)))
+            checkGhosts(ghosts)
+            movePacman();
+            checkDots();
+            moveGhost(blue);
+            moveGhost(red);
+            moveGhost(orange);
+            moveGhost(pink);
         }
 
         function setScale(sprite) {
@@ -695,9 +692,9 @@
             //ctx.strokeStyle = "#FF0000";
             //ctx.strokeRect(sprite1.x, sprite1.y, size1, size1);
             return sprite1.x < (sprite2.x + maze.scaleX * size2) && 
-                   (sprite1.x + maze.scaleX * size2) > sprite2.x && 
+                   (sprite1.x + maze.scaleX * size1) > sprite2.x && 
                    sprite1.y < (sprite2.y + maze.scaleY * size2) && 
-                   (sprite1.y + maze.scaleY * size2) > sprite2.y
+                   (sprite1.y + maze.scaleY * size1) > sprite2.y
         }
 
     </script>
