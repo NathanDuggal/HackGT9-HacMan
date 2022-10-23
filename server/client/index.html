@@ -715,9 +715,10 @@
                     stage.removeChild(dot);
                     chomp = createjs.Sound.play("chomp");
                     powerUp = true;
+                    setTimeout(function(){ powerUp=false }, 15000)
                 }
             }
-            //setTimeout(function(){ powerUp=false }, 15000)
+            
         }
 
         function checkGhosts(ghosts) {
