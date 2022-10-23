@@ -44,7 +44,6 @@
 
         // Joystick properties
         const deadThresh = 0.8;
-        var lastAni = "pacmanIdleRight";
 
         //lol sample
         Array.prototype.sample = function(){
@@ -279,6 +278,7 @@
             circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2 + 4;
             circle.x = windowWidth/2 - circle.scaleX * pacmanSize/2;
             circle.gotoAndPlay("pacmanIdleRight");
+            circle.lastAni = "pacmanIdleRight";
 
             // Red Ghost
 			red = new createjs.Sprite(spriteSheet);
@@ -599,12 +599,14 @@
                     }
                 }
             } else {
-                newAni = lastAni.replace("Move", "Idle");
+                if (circle.lastAni != undefined) {
+                    newAni = circle.lastAni.replace("Move", "Idle");
+                }
             }
-            if (newAni != lastAni) {
+            if (newAni != circle.lastAni) {
                 circle.gotoAndPlay(newAni);
             }
-            lastAni = newAni;
+            circle.lastAni = newAni;
 
 
             //if (circle.x < 0) {
