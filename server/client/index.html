@@ -66,9 +66,9 @@
             isFullScreen,
             score, 
             chomp,
-            smallDots = [], 
-            bigDots = [], 
-            characters = [];
+            smallDots, 
+            bigDots, 
+            characters;
 
         var score = 0;
         var powerUp = false;
@@ -306,6 +306,8 @@
             maze.y = 0;
             maze.x = windowWidth / 2 - maze.scaleX * mazeWidth / 2;
 
+            characters = [];
+
             // Pacman
             circle = new createjs.Sprite(spriteSheet);
             setScale(circle);
@@ -352,6 +354,7 @@
             orange.gotoAndPlay("orangeMoveRight");
 
             // Small Dots
+            smallDots = [];
             for (let i = 0; i < smallDotMap.length; i++) {
                 for (let ii = 0; ii < smallDotMap[0].length; ii++) {
                     //console.log(i + " " + ii);
@@ -371,6 +374,8 @@
             }
 
             // Big Dots
+            bigDots = [];
+
             var screenCoords;
 
             let bd1 = new createjs.Sprite(bigDotSheet);
@@ -688,10 +693,18 @@
             life = 3;
             score=0;
 
-            createjs.Ticker.on("tick", a => []);
+            createjs.Ticker.on("tick", a => {});
             stage.removeAllChildren();
-            let context = document.getElementById('mainCanvas').getContext('2d');
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            let canvas = document.getElementById('mainCanvas');
+            let context = canvas.getContext('2d');
+            ctx.strokeStyle = "#000000";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            smallDotMap =
+            fetch('assets/sprites/small_dot_map.json')
+                .then((response) => response.json())
+                .then((json) => smallDotMap = json)
+
             calibrate();
         }
 
