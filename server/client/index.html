@@ -437,6 +437,12 @@
 
             // Pause ticker
             createjs.Ticker.on("tick", a => {});
+            if(!isJojiPlaying) {
+                joji = createjs.Sound.play("glimpseOfUs");
+                isJojiPlaying = true;
+            }
+            
+            chomp.paused = true;
 
             console.log("called game over");
             //this.toggleScreen('start-screen', false);
@@ -607,12 +613,12 @@
 
             if (isFullScreen) {
                 
-                if(isDead && !isJojiPlaying) {
+                /*if(isDead && !isJojiPlaying) {
                     var jojiProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.8})
                     background.paused = true;
                     createjs.Sound.play("glimpseOfUs", jojiProps);
                     isJojiPlaying = true;
-                }
+                }*/
 
                 if (canvas.getContext) {
                     ctx.font = "20px pixelation";
@@ -719,6 +725,8 @@
             let context = canvas.getContext('2d');
             ctx.strokeStyle = "#000000";
             context.fillRect(0, 0, canvas.width, canvas.height);
+            joji.paused = true;
+            background.paused = true;
 
             smallDotMap =
             fetch('assets/sprites/small_dot_map.json')
