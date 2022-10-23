@@ -31,7 +31,7 @@
 
         // Maze collision map
         var collisionMap = 
-        fetch('assets/sprites/array_image.json')
+        fetch('assets/sprites/corners.json')
             .then((response) => response.json())
             .then((json) => collisionMap = json)
             .then(e => console.log(collisionMap));
