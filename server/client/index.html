@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"> </script>
     <link rel="stylesheet" href="assets/sprites/style.css">
@@ -31,47 +32,47 @@
         var xVel = 0, yVel = 0;
 
         // Maze collision map
-        var collisionMap = 
-        fetch('assets/sprites/ghosts.json')
-            .then((response) => response.json())
-            .then((json) => collisionMap = json);
+        var collisionMap =
+            fetch('assets/sprites/ghosts.json')
+                .then((response) => response.json())
+                .then((json) => collisionMap = json);
 
         // Maze dot map
-        var smallDotMap = 
-        fetch('assets/sprites/small_dot_map.json')
-            .then((response) => response.json())
-            .then((json) => smallDotMap = json)
+        var smallDotMap =
+            fetch('assets/sprites/small_dot_map.json')
+                .then((response) => response.json())
+                .then((json) => smallDotMap = json)
 
         // Joystick properties
         const deadThresh = 0.8;
 
         //lol sample
-        Array.prototype.sample = function(){
-            return this[Math.floor(Math.random()*this.length)];
+        Array.prototype.sample = function () {
+            return this[Math.floor(Math.random() * this.length)];
         }
 
-        function loadSound () {
+        function loadSound() {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
         }
-        
+
         var life = 3;
-		var circle, 
-            maze, 
-            characterImage, 
-            spriteSheet, 
-            stage, 
-            canvas, 
-            ctx, 
+        var circle,
+            maze,
+            characterImage,
+            spriteSheet,
+            stage,
+            canvas,
+            ctx,
             isFullScreen,
             score, 
             chomp,
             smallDots = [], 
             bigDots = [], 
             characters = [];
-        
+
         var score = 0;
 
-        function loadSound () {
+        function loadSound() {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
             createjs.Sound.registerSound("assets/sprites/Chomp.mp3", "chomp");
             createjs.Sound.registerSound("assets/sprites/Cutscene.mp3", "cutscene");
@@ -80,7 +81,7 @@
             createjs.Sound.registerSound("assets/sprites/glimpseOfUs.mp3", "glimpseOfUs");
         }
 
-		function init() {
+        function init() {
             var z1 = document.getElementById("calibrating");
             z1.style.display = "none";
             var z2 = document.getElementById("gameover-screen");
@@ -103,149 +104,149 @@
 
             characterImage = {
                 images: ["assets/sprites/Pacman.png"],
-                frames: {width:16, height:16},
+                frames: { width: 16, height: 16 },
                 animations: {
-                    pacmanIdleRight:0,
-                    pacmanMoveRight:{
-                        frames: [0,1,2],
+                    pacmanIdleRight: 0,
+                    pacmanMoveRight: {
+                        frames: [0, 1, 2],
                         speed: anim_speed
                     },
-                    pacmanIdleLeft:14,
-                    pacmanMoveLeft:{
-                        frames: [14,15,2],
+                    pacmanIdleLeft: 14,
+                    pacmanMoveLeft: {
+                        frames: [14, 15, 2],
                         speed: anim_speed
                     },
-                    pacmanIdleUp:28,
-                    pacmanMoveUp:{
-                        frames: [28,29,2],
+                    pacmanIdleUp: 28,
+                    pacmanMoveUp: {
+                        frames: [28, 29, 2],
                         speed: anim_speed
                     },
-                    pacmanIdleDown:42,
-                    pacmanMoveDown:{
-                        frames: [42,43,2],
+                    pacmanIdleDown: 42,
+                    pacmanMoveDown: {
+                        frames: [42, 43, 2],
                         speed: anim_speed
                     },
-                    redIdleRight:56,
-                    redMoveRight:{
-                        frames: [56,57],
+                    redIdleRight: 56,
+                    redMoveRight: {
+                        frames: [56, 57],
                         speed: anim_speed
                     },
-                    redIdleLeft:58,
-                    redMoveLeft:{
-                        frames: [58,59],
+                    redIdleLeft: 58,
+                    redMoveLeft: {
+                        frames: [58, 59],
                         speed: anim_speed
                     },
-                    redIdleUp:60,
-                    redMoveUp:{
-                        frames: [60,61],
+                    redIdleUp: 60,
+                    redMoveUp: {
+                        frames: [60, 61],
                         speed: anim_speed
                     },
-                    redIdleDown:62,
-                    redMoveDown:{
-                        frames: [62,63],
-                        speed: anim_speed
-                    },
-                    
-                    deadMove:{
-                        frames: [64,65,66,67],
+                    redIdleDown: 62,
+                    redMoveDown: {
+                        frames: [62, 63],
                         speed: anim_speed
                     },
 
-                    pinkIdleRight:70,
-                    pinkMoveRight:{
-                        frames: [70,71],
-                        speed: anim_speed
-                    },
-                    pinkIdleLeft:72,
-                    pinkMoveLeft:{
-                        frames: [72,73],
-                        speed: anim_speed
-                    },
-                    pinkIdleUp:74,
-                    pinkMoveUp:{
-                        frames: [74,75],
-                        speed: anim_speed
-                    },
-                    pinkIdleDown:76,
-                    pinkMoveDown:{
-                        frames: [76,77],
+                    deadMove: {
+                        frames: [64, 65, 66, 67],
                         speed: anim_speed
                     },
 
-                    blueIdleRight:84,
-                    blueMoveRight:{
-                        frames: [84,85],
+                    pinkIdleRight: 70,
+                    pinkMoveRight: {
+                        frames: [70, 71],
                         speed: anim_speed
                     },
-                    blueIdleLeft:86,
-                    blueMoveLeft:{
-                        frames: [86,87],
+                    pinkIdleLeft: 72,
+                    pinkMoveLeft: {
+                        frames: [72, 73],
                         speed: anim_speed
                     },
-                    blueIdleUp:88,
-                    blueMoveUp:{
-                        frames: [88,89],
+                    pinkIdleUp: 74,
+                    pinkMoveUp: {
+                        frames: [74, 75],
                         speed: anim_speed
                     },
-                    blueIdleDown:90,
-                    blueMoveDown:{
-                        frames: [90,91],
-                        speed: anim_speed
-                    },
-
-                    orangeIdleRight:98,
-                    orangeMoveRight:{
-                        frames: [98,99],
-                        speed: anim_speed
-                    },
-                    orangeIdleLeft:100,
-                    orangeMoveLeft:{
-                        frames: [100,101],
-                        speed: anim_speed
-                    },
-                    orangeIdleUp:102,
-                    orangeMoveUp:{
-                        frames: [102,103],
-                        speed: anim_speed
-                    },
-                    orangeIdleDown:104,
-                    orangeMoveDown:{
-                        frames: [104,105],
+                    pinkIdleDown: 76,
+                    pinkMoveDown: {
+                        frames: [76, 77],
                         speed: anim_speed
                     },
 
-                    
+                    blueIdleRight: 84,
+                    blueMoveRight: {
+                        frames: [84, 85],
+                        speed: anim_speed
+                    },
+                    blueIdleLeft: 86,
+                    blueMoveLeft: {
+                        frames: [86, 87],
+                        speed: anim_speed
+                    },
+                    blueIdleUp: 88,
+                    blueMoveUp: {
+                        frames: [88, 89],
+                        speed: anim_speed
+                    },
+                    blueIdleDown: 90,
+                    blueMoveDown: {
+                        frames: [90, 91],
+                        speed: anim_speed
+                    },
+
+                    orangeIdleRight: 98,
+                    orangeMoveRight: {
+                        frames: [98, 99],
+                        speed: anim_speed
+                    },
+                    orangeIdleLeft: 100,
+                    orangeMoveLeft: {
+                        frames: [100, 101],
+                        speed: anim_speed
+                    },
+                    orangeIdleUp: 102,
+                    orangeMoveUp: {
+                        frames: [102, 103],
+                        speed: anim_speed
+                    },
+                    orangeIdleDown: 104,
+                    orangeMoveDown: {
+                        frames: [104, 105],
+                        speed: anim_speed
+                    },
+
+
                 }
             };
 
             mazeImage = {
                 images: ["assets/sprites/Maze.png"],
-                frames: {width:224, height:248}
+                frames: { width: 224, height: 248 }
             };
 
             textImage = {
                 images: ["assets/sprites/Text.png"],
-                frames: {width:8, height:8},
+                frames: { width: 8, height: 8 },
                 animations: {
-                    a:1,
-                    b:2,
-                    c:3,
-                    d:4,
-                    e:5,
-                    f:6,
-                    g:7,
-                    h:8,
-                }    
+                    a: 1,
+                    b: 2,
+                    c: 3,
+                    d: 4,
+                    e: 5,
+                    f: 6,
+                    g: 7,
+                    h: 8,
+                }
             }
 
             smallDotImage = {
                 images: ["assets/sprites/SmallDot.png"],
-                frames: {width:2, height:2}
+                frames: { width: 2, height: 2 }
             }
 
-            bigDotImage = { 
+            bigDotImage = {
                 images: ["assets/sprites/BigDot.png"],
-                frames: {width:8, height:8}
+                frames: { width: 8, height: 8 }
             }
 
             spriteSheet = new createjs.SpriteSheet(characterImage);
@@ -253,7 +254,7 @@
             var bigDotSheet = new createjs.SpriteSheet(bigDotImage);
             var textSheet = new createjs.SpriteSheet(textImage);
             var mazeSheet = new createjs.SpriteSheet(mazeImage);
-            
+
             //var animation = new createjs.Sprite(spriteSheet);
 
             // -----------------
@@ -262,20 +263,20 @@
             canvas = document.getElementById('mainCanvas');
             ctx = canvas.getContext("2d");
 
-            function fullscreen(){
+            function fullscreen() {
                 isFullScreen = true;
-                if(canvas.webkitRequestFullScreen) {
+                if (canvas.webkitRequestFullScreen) {
                     canvas.webkitRequestFullScreen();
                 }
                 else {
                     canvas.mozRequestFullScreen();
-                }            
+                }
             }
- 
-            canvas.addEventListener("click",fullscreen);
+
+            canvas.addEventListener("click", fullscreen);
 
             canvas.height = windowHeight;
-            canvas.width = windowWidth; 
+            canvas.width = windowWidth;
 
             document.addEventListener('keydown', (e) => {
                 if (!(typeof keyDownMap.get(e.code) === "undefined") && e.code != mostRecentKey) {
@@ -295,74 +296,74 @@
             // Set up game loop
             // -----------------
 
-			stage = new createjs.Stage("mainCanvas");
+            stage = new createjs.Stage("mainCanvas");
 
             // Background
             maze = new createjs.Sprite(mazeSheet);
             setScale(maze);
             maze.y = 0;
-            maze.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
+            maze.x = windowWidth / 2 - maze.scaleX * mazeWidth / 2;
 
             // Pacman
-			circle = new createjs.Sprite(spriteSheet);
-			setScale(circle);
+            circle = new createjs.Sprite(spriteSheet);
+            setScale(circle);
             characters.push(circle);
-            circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2 + 4;
-            circle.x = windowWidth/2 - circle.scaleX * pacmanSize/2;
+            circle.y = windowHeight / 2 + circle.scaleY * pacmanSize / 2 + 4;
+            circle.x = windowWidth / 2 - circle.scaleX * pacmanSize / 2;
             circle.gotoAndPlay("pacmanIdleRight");
             circle.lastAni = "pacmanIdleRight";
 
             // Red Ghost
-			red = new createjs.Sprite(spriteSheet);
-			setScale(red);
+            red = new createjs.Sprite(spriteSheet);
+            setScale(red);
             characters.push(red);
-            red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 400;
-            red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
+            red.y = windowHeight / 2 + red.scaleY * pacmanSize / 2 - 400;
+            red.x = windowWidth / 2 - red.scaleX * pacmanSize / 2;
             red.lastAnimation = "redMoveRight"
             red.gotoAndPlay("redMoveRight");
 
             // Pink Ghost
-			pink = new createjs.Sprite(spriteSheet);
-			setScale(pink);
+            pink = new createjs.Sprite(spriteSheet);
+            setScale(pink);
             characters.push(pink);
-            pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 400;
-            pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
+            pink.y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
+            pink.x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
             pink.lastAnimation = "pinkMoveRight"
             pink.gotoAndPlay("pinkMoveRight");
 
             // Blue Ghost
-			blue = new createjs.Sprite(spriteSheet);
-			setScale(blue);
+            blue = new createjs.Sprite(spriteSheet);
+            setScale(blue);
             characters.push(blue);
-            blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 - 400;
-            blue.x = windowWidth/2 - blue.scaleX * pacmanSize/2;
+            blue.y = windowHeight / 2 + blue.scaleY * pacmanSize / 2 - 400;
+            blue.x = windowWidth / 2 - blue.scaleX * pacmanSize / 2;
             blue.lastAnimation = "blueMoveRight"
             blue.gotoAndPlay("blueMoveRight");
 
             // Orange Ghost
-			orange = new createjs.Sprite(spriteSheet);
-			setScale(orange);
+            orange = new createjs.Sprite(spriteSheet);
+            setScale(orange);
             characters.push(orange);
-            orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 400;
-            orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
+            orange.y = windowHeight / 2 + orange.scaleY * pacmanSize / 2 - 400;
+            orange.x = windowWidth / 2 - orange.scaleX * pacmanSize / 2;
             orange.lastAnimation = "orangeMoveRight"
             orange.gotoAndPlay("orangeMoveRight");
-            
+
             // Small Dots
             for (let i = 0; i < smallDotMap.length; i++) {
                 for (let ii = 0; ii < smallDotMap[0].length; ii++) {
                     //console.log(i + " " + ii);
-                    if (smallDotMap[i][ii]==1) {
-                        let screenCoords = pixelToScreen(ii,i);
+                    if (smallDotMap[i][ii] == 1) {
+                        let screenCoords = pixelToScreen(ii, i);
                         let dot = new createjs.Sprite(smallDotSheet);
                         setScale(dot);
                         dot.x = screenCoords.x;
                         dot.y = screenCoords.y;
                         smallDots.push(dot);
                         smallDotMap[i][ii] = 0;
-                        smallDotMap[i][ii+1] = 0;
-                        smallDotMap[i+1][ii] = 0;
-                        smallDotMap[i+1][ii+1] = 0;
+                        smallDotMap[i][ii + 1] = 0;
+                        smallDotMap[i + 1][ii] = 0;
+                        smallDotMap[i + 1][ii + 1] = 0;
                     }
                 }
             }
@@ -372,28 +373,28 @@
 
             let bd1 = new createjs.Sprite(bigDotSheet);
             setScale(bd1);
-            screenCoords = pixelToScreen(8,24);
+            screenCoords = pixelToScreen(8, 24);
             bd1.x = screenCoords.x;
             bd1.y = screenCoords.y;
             bigDots.push(bd1);
 
             let bd2 = new createjs.Sprite(bigDotSheet);
             setScale(bd2);
-            screenCoords = pixelToScreen(208,24);
+            screenCoords = pixelToScreen(208, 24);
             bd2.x = screenCoords.x;
             bd2.y = screenCoords.y;
             bigDots.push(bd2);
 
             let bd3 = new createjs.Sprite(bigDotSheet);
             setScale(bd3);
-            screenCoords = pixelToScreen(8,184);
+            screenCoords = pixelToScreen(8, 184);
             bd3.x = screenCoords.x;
             bd3.y = screenCoords.y;
             bigDots.push(bd3);
 
             let bd4 = new createjs.Sprite(bigDotSheet);
             setScale(bd4);
-            screenCoords = pixelToScreen(208,184);
+            screenCoords = pixelToScreen(208, 184);
             bd4.x = screenCoords.x;
             bd4.y = screenCoords.y;
             bigDots.push(bd4);
@@ -414,7 +415,7 @@
 
             //displayMenu();
             start();
-		}
+        }
 
         function gameOver() {
             console.log("called game over");
@@ -429,7 +430,7 @@
             // Start game loop
             console.log("started game loop");
             createjs.Ticker.framerate = 60;
-			createjs.Ticker.on("tick", tick);
+            createjs.Ticker.on("tick", tick);
         }
 
         function moveGhost(ghost) {
@@ -446,7 +447,7 @@
                 ghost.x += -move_value;
             }
 
-            movementArray = [[0,-move_value], [0,move_value], [move_value,0], [-move_value,0]];
+            movementArray = [[0, -move_value], [0, move_value], [move_value, 0], [-move_value, 0]];
             var possibleMovements = ["Up", "Down", "Right", "Left"];
             var actualPossibleMovements = [];
             var nextMovement;
@@ -455,12 +456,12 @@
             var ghostX = pixelCoords.x;
             var ghostY = pixelCoords.y;
 
-            for (let j=0; j<4; j++){
+            for (let j = 0; j < 4; j++) {
                 coords = movementArray[j]
                 let isValid = true;
                 for (let i = ghostY + coords[1] + 2; i < ghostY + coords[1] + 14; i++) {
                     for (let ii = ghostX + coords[0] + 2; ii < ghostX + coords[0] + 14; ii++) {
-                        if (i >= 0 && ii >=0 && collisionMap[i][ii] == 1) {
+                        if (i >= 0 && ii >= 0 && collisionMap[i][ii] == 1) {
                             isValid = false;
                         }
                     }
@@ -469,7 +470,7 @@
                     actualPossibleMovements.push(possibleMovements[j])
                 }
             }
-            if (actualPossibleMovements.includes(ghost.currentAnimation.split("Move")[1]) && Math.random()>0.02){
+            if (actualPossibleMovements.includes(ghost.currentAnimation.split("Move")[1]) && Math.random() > 0.02) {
                 nextMovement = ghost.currentAnimation;
                 console.log(1)
             } else {
@@ -506,7 +507,7 @@
             // console.log(pacmanX + " " + pacmanY)
             for (let i = pacmanY + 2; i < pacmanY + 14; i++) {
                 for (let ii = pacmanX + 2; ii < pacmanX + 14; ii++) {
-                    if (i >= 0 && ii >=0 && collisionMap[i][ii] == 1) {
+                    if (i >= 0 && ii >= 0 && collisionMap[i][ii] == 1) {
                         // console.log(1);
                         circle.x = beforeX;
                         circle.y = beforeY;
@@ -515,20 +516,20 @@
             }
         }
 
-        function pixelToScreen(xCoord,yCoord) {
-            let x = xCoord * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
+        function pixelToScreen(xCoord, yCoord) {
+            let x = xCoord * maze.scaleX + windowWidth / 2 - (maze.scaleX * mazeWidth / 2);
             let y = yCoord * maze.scaleY;
             return { x, y };
         }
 
         function screenToPixel(xCoord, yCoord) {
-            let x = Math.floor((xCoord - windowWidth/2 + maze.scaleX * mazeWidth/2) / maze.scaleX);
+            let x = Math.floor((xCoord - windowWidth / 2 + maze.scaleX * mazeWidth / 2) / maze.scaleX);
             let y = Math.floor(yCoord / maze.scaleY);
             return { x, y };
         }
 
         function drawCircle(x, y) {
-            ctx.arc(x, y, 20, 0, 2*Math.PI);
+            ctx.arc(x, y, 20, 0, 2 * Math.PI);
             ctx.fillStyle = "#FF0000";
             ctx.fill();
         }
@@ -550,13 +551,13 @@
                 //throw new Error();
                 var xmlHttp = new XMLHttpRequest();
                 //var background;
-                
-                xmlHttp.open( "GET", "/data", false ); // false for synchronous request
+
+                xmlHttp.open("GET", "/data", false); // false for synchronous request
                 xmlHttp.send();
 
                 x = JSON.parse(xmlHttp.responseText).x_joy;
                 y = JSON.parse(xmlHttp.responseText).y_joy;
-            } catch (error) {}
+            } catch (error) { }
 
             if (isFullScreen) {
                 
@@ -566,7 +567,7 @@
                     createjs.Sound.play("glimpseOfUs", jojiProps);
                     isJojiPlaying = true;
                 }
-                
+
                 if (canvas.getContext) {
                     ctx.font = "20px pixelation";
                     ctx.fillText("Joystick ", gamepadX, gamepadY - 10);
@@ -574,7 +575,7 @@
                     ctx.clearRect(gamepadX, gamepadY, 100,100);
                     ctx.beginPath();
                     ctx.rect(gamepadX, gamepadY, 100, 100);
-                    ctx.fillStyle = "#808080"; 
+                    ctx.fillStyle = "#808080";
                     ctx.fill();
 
                     ctx.beginPath();
@@ -590,7 +591,7 @@
                     ctx.fillText("Lives: " + life, gamepadX, 200);
                 }
             }
-            
+
             // circle.x += 10 * x;
             // circle.y += -10 * y;
 
@@ -612,26 +613,26 @@
             } else {
                 if (circle.lastAni != undefined) {
                     newAni = circle.lastAni.replace("Move", "Idle");
-            }
-            }
-            if (newAni != circle.lastAni) {
-                circle.gotoAndPlay(newAni);
-            }
-            circle.lastAni = newAni;
+                }
+                if (newAni != circle.lastAni) {
+                    circle.gotoAndPlay(newAni);
+                }
+                circle.lastAni = newAni;
 
-            ghosts = [blue, red, orange, pink]
-            ghosts.forEach(a => (moveGhost(a)))
-            checkGhosts(ghosts)
-            movePacman();
-            checkDots();
-            moveGhost(blue);
-            moveGhost(red);
-            moveGhost(orange);
-            moveGhost(pink);
+                ghosts = [blue, red, orange, pink]
+                ghosts.forEach(a => (moveGhost(a)))
+                checkGhosts(ghosts)
+                movePacman();
+                checkDots();
+                moveGhost(blue);
+                moveGhost(red);
+                moveGhost(orange);
+                moveGhost(pink);
+            }
         }
 
         function setScale(sprite) {
-            sprite.scaleY = windowHeight/mazeHeight;
+            sprite.scaleY = windowHeight / mazeHeight;
             sprite.scaleX = sprite.scaleY;
         }
 
@@ -651,8 +652,8 @@
             x.style.display = "block";
             //setTimeout(tester, 1000);
             var xmlHttp = new XMLHttpRequest();
-                
-            xmlHttp.open( "GET", "/calibrate", false); // false for synchronous request
+
+            xmlHttp.open("GET", "/calibrate", false); // false for synchronous request
             xmlHttp.send();
             setTimeout(init, 5000);
         }
@@ -661,7 +662,7 @@
             for (let i = 0; i < smallDots.length; i++) {
                 let dot = smallDots[i];
                 if (spriteIntersects(circle, pacmanSize, dot, 6)) {
-                    smallDots.splice(i,1);
+                    smallDots.splice(i, 1);
                     stage.removeChild(dot);
                     chomp = createjs.Sound.play("chomp");
                     score += 20;
@@ -682,8 +683,8 @@
             }
             if (collided) {
                 for (let i = 0; i < ghosts.length; i++) {
-                    ghosts[i].y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 400;
-                    ghosts[i].x = windowWidth/2 - pink.scaleX * pacmanSize/2;
+                    ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
+                    ghosts[i].x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
                 }
                 life--;
             }
@@ -700,8 +701,9 @@
                    (sprite1.y + maze.scaleY * size2) > sprite2.y
         }
 
-	</script>
+    </script>
 </head>
+
 <body>
     <div id='start-screen' class='screen' style='display:block'>
         <p1 class="center">
@@ -768,4 +770,5 @@
         alternate content
     </canvas>
 </body>
+
 </html>
