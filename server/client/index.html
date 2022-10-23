@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <link rel="stylesheet" href="assets/sprites/style.css">
     <script>
 
         // Screen properties
@@ -34,8 +34,13 @@
         var collisionMap = 
         fetch('assets/sprites/corners.json')
             .then((response) => response.json())
-            .then((json) => collisionMap = json)
-            .then(e => console.log(collisionMap));
+            .then((json) => collisionMap = json);
+
+        // Maze dot map
+        var smallDotMap = 
+        fetch('assets/sprites/small_dot_map.json')
+            .then((response) => response.json())
+            .then((json) => smallDotMap = json)
 
         // Joystick properties
         const deadThresh = 0.8;
@@ -43,6 +48,17 @@
 
         // Instance variables
 		var circle, maze, characters, spriteSheet, stage, canvas, ctx, isFullScreen, isBackgroundPlaying, isDead, isJojiPlaying, sprites = [];
+        var circle, 
+            maze, 
+            characterImage, 
+            spriteSheet, 
+            stage, 
+            canvas, 
+            ctx, 
+            isFullScreen, 
+            smallDots = [], 
+            bigDots = [], 
+            characters = [];
 
         function loadSound () {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
@@ -67,16 +83,7 @@
             isJojiPlaying = false;
             isDead = true;
 
-            /*var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, muted: false})
-            //backgroundMusic = createjs.Sound.play("backgroundMusic", backgroundProps);
-            
-            
-            if (isDead) {
-                //backgroundMusic.paused = true;
-                createjs.Sound.play("glimpseOfUs", backgroundProps);
-            }*/
-
-            characters = {
+            characterImage = {
                 images: ["assets/sprites/Pacman.png"],
                 frames: {width:16, height:16},
                 animations: {
@@ -95,7 +102,80 @@
                     pacmanIdleDown:42,
                     pacmanMoveDown:{
                         frames: [42,43,2]
-                    }
+                    },
+                    redIdleRight:56,
+                    redMoveRight:{
+                        frames: [56,57]
+                    },
+                    redIdleLeft:58,
+                    redMoveLeft:{
+                        frames: [58,59]
+                    },
+                    redIdleUp:60,
+                    redMoveUp:{
+                        frames: [60,61]
+                    },
+                    redIdleDown:62,
+                    redMoveDown:{
+                        frames: [62,63]
+                    },
+                    
+                    deadMove:{
+                        frames: [64,65,66,67]
+                    },
+
+                    pinkIdleRight:70,
+                    pinkMoveRight:{
+                        frames: [70,71]
+                    },
+                    pinkIdleLeft:72,
+                    pinkMoveLeft:{
+                        frames: [72,73]
+                    },
+                    pinkIdleUp:74,
+                    pinkMoveUp:{
+                        frames: [74,75]
+                    },
+                    pinkIdleDown:76,
+                    pinkMoveDown:{
+                        frames: [76,77]
+                    },
+
+                    blueIdleRight:84,
+                    blueMoveRight:{
+                        frames: [84,85]
+                    },
+                    blueIdleLeft:86,
+                    blueMoveLeft:{
+                        frames: [86,87]
+                    },
+                    blueIdleUp:88,
+                    blueMoveUp:{
+                        frames: [88,89]
+                    },
+                    blueIdleDown:90,
+                    blueMoveDown:{
+                        frames: [90,91]
+                    },
+
+                    orangeIdleRight:98,
+                    orangeMoveRight:{
+                        frames: [98,99]
+                    },
+                    orangeIdleLeft:100,
+                    orangeMoveLeft:{
+                        frames: [100,101]
+                    },
+                    orangeIdleUp:102,
+                    orangeMoveUp:{
+                        frames: [102,103]
+                    },
+                    orangeIdleDown:104,
+                    orangeMoveDown:{
+                        frames: [104,105]
+                    },
+
+                    
                 }
             };
 
@@ -119,24 +199,21 @@
                 }    
             }
 
-            collectablesImage = {
-                images: ["assets/sprites/Dots.png"],
-                frames: {width:8, height:8, spacing: 1}
+            smallDotImage = {
+                images: ["assets/sprites/SmallDot.png"],
+                frames: {width:2, height:2}
             }
 
+            bigDotImage = { 
+                images: ["assets/sprites/BigDot.png"],
+                frames: {width:8, height:8}
+            }
 
-            cv = document.createElement("CANVAS");
-            c = cv.getContext("2d");
-            c.drawImage(new Image("assets/sprites/Maze.png"), 0,0,mazeWidth,mazeHeight);
-    
-            var imgData = c.getImageData(0, 0, mazeWidth, mazeHeight);
-
-            console.log(imgData);
-
-            collectablesSheet = new createjs.SpriteSheet(collectablesImage);
-            textSheet = new createjs.SpriteSheet(textImage);
-            spriteSheet = new createjs.SpriteSheet(characters);
-            mazeSheet = new createjs.SpriteSheet(mazeImage);
+            spriteSheet = new createjs.SpriteSheet(characterImage);
+            var smallDotSheet = new createjs.SpriteSheet(smallDotImage);
+            var bigDotSheet = new createjs.SpriteSheet(smallDotImage);
+            var textSheet = new createjs.SpriteSheet(textImage);
+            var mazeSheet = new createjs.SpriteSheet(mazeImage);
             
             //var animation = new createjs.Sprite(spriteSheet);
 
@@ -184,21 +261,51 @@
             // Background
             maze = new createjs.Sprite(mazeSheet);
             setScale(maze);
-            sprites.push(maze);
+            characters.push(maze);
             maze.y = 0;
             maze.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
 
             // Pacman
 			circle = new createjs.Sprite(spriteSheet);
 			setScale(circle);
-            sprites.push(circle);
+            characters.push(circle);
             circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2 + 4;
             circle.x = windowWidth/2 - circle.scaleX * pacmanSize/2;
-
             circle.gotoAndPlay("pacmanIdleRight");
+
+            // Red Ghost
+			red = new createjs.Sprite(spriteSheet);
+			setScale(red);
+            sprites.push(red);
+            red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 120;
+            red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
+            red.gotoAndPlay("redIdleRight");
+            
+            // Small Dots
+            for (let i = 0; i < smallDotMap.length; i++) {
+                for (let ii = 0; ii < smallDotMap[0].length; ii++) {
+                    console.log(i + " " + ii);
+                    if (smallDotMap[i][ii]==1) {
+                        let screenCoords = pixelToScreen(ii,i);
+                        let dot = new createjs.Sprite(smallDotSheet);
+                        setScale(dot);
+                        dot.x = screenCoords.x;
+                        dot.y = screenCoords.y;
+                        smallDots.push(dot);
+                        smallDotMap[i][ii] = 0;
+                        smallDotMap[i][ii+1] = 0;
+                        smallDotMap[i+1][ii] = 0;
+                        smallDotMap[i+1][ii+1] = 0;
+                    }
+                }
+            }
 			
             // 
-            sprites.forEach(sprite => {
+            characters.forEach(sprite => {
+                stage.addChild(sprite);
+            });
+
+            smallDots.forEach(sprite => {
                 stage.addChild(sprite);
             });
 
@@ -216,14 +323,14 @@
 
         function makeSpriteString(string) {
 
-            sprites = [];
+            characterImage = [];
 
             while (string.length > 0) {
-                sprites.push(new createjs.Sprite(textSheet, string.charCodeAt(0) - 97));
+                characterImage.push(new createjs.Sprite(textSheet, string.charCodeAt(0) - 97));
                 string = string.substring(1);
             }
 
-            return sprites;
+            return characterImage;
         }
 
         function displaySpriteString(x,y,sprites) {
@@ -256,27 +363,27 @@
                 circle.x += -8;
             }
 
-            const pacmanTopSide = circle.y;
-            const pacmanBottomSide = circle.y + circle.scaleY * pacmanSize;
-            const pacmanLeftSide = circle.x;
-            const pacmanRightSide = circle.x + circle.scaleX * pacmanSize;
+            // const pacmanTopSide = circle.y;
+            // const pacmanBottomSide = circle.y + circle.scaleY * pacmanSize;
+            // const pacmanLeftSide = circle.x;
+            // const pacmanRightSide = circle.x + circle.scaleX * pacmanSize;
 
-            console.log("Test-")
-            console.log(circle.x + " " + circle.y)
+            // console.log("Test-")
+            // console.log(circle.x + " " + circle.y)
 
-            var pacmanX = Math.floor((circle.x -windowWidth/2 + circle.scaleX * mazeWidth/2) / circle.scaleX);
-            var pacmanY = Math.floor(circle.y/circle.scaleY);
+            let pixelCoords = screenToPixel(circle.x, circle.y)
+            var pacmanX = pixelCoords.x;
+            var pacmanY = pixelCoords.y;
 
-            console.log(pacmanX + " " + pacmanY)
+            // console.log(pacmanX + " " + pacmanY)
 
-            var backToX = pacmanX * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
-            var backToY = pacmanY * maze.scaleY;
+            //var backToX = pacmanX * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
+            //var backToY = pacmanY * maze.scaleY;
 
-            console.log(backToX + " " + backToY)
+            // console.log(backToX + " " + backToY)
 
-
-            console.log(pacmanX + " " + pacmanY) 
-            console.log(pacmanX + 8 + " " + (pacmanY + 8))
+            // console.log(pacmanX + " " + pacmanY) 
+            // console.log(pacmanX + 8 + " " + (pacmanY + 8))
 
             // for (let i = 0; i < collisionMap.length; i++) {
             //     for (let ii = 0; ii < collisionMap[0].length; ii++) {
@@ -291,18 +398,16 @@
             //     }
             // }
 
-            console.log(pacmanX + " " + pacmanY)
+            // console.log(pacmanX + " " + pacmanY)
             for (let i = pacmanY + 2; i < pacmanY + 14; i++) {
                 for (let ii = pacmanX + 2; ii < pacmanX + 14; ii++) {
                     if (i >= 0 && ii >=0 && collisionMap[i][ii] == 1) {
-                        console.log(1);
+                        // console.log(1);
                         circle.x = beforeX;
                         circle.y = beforeY;
                     }
                 }
             }
-
-            console.log(circle.x)
 
             // Right side collision
             //if (pacmanRightSide > windowWidth/2 + maze.scaleX * mazeWidth/2) {    
@@ -321,6 +426,18 @@
             //}
         }
 
+        function pixelToScreen(xCoord,yCoord) {
+            let x = xCoord * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
+            let y = yCoord * maze.scaleY;
+            return { x, y };
+        }
+
+        function screenToPixel(xCoord, yCoord) {
+            let x = Math.floor((xCoord - windowWidth/2 + maze.scaleX * mazeWidth/2) / maze.scaleX);
+            let y = Math.floor(yCoord / maze.scaleY);
+            return { x, y };
+        }
+
         function drawCircle(x, y) {
             ctx.arc(x, y, 20, 0, 2*Math.PI);
             ctx.fillStyle = "#FF0000";
@@ -330,11 +447,12 @@
         function tick(event) {
             stage.update(event);
 
-            
-            var x = 0;
-            var y = 0;
             var background;
+            let x = 0;
+            let y = 0;
+
             try {
+                throw new Error();
                 var xmlHttp = new XMLHttpRequest();
                 
                 xmlHttp.open( "GET", "/data", false ); // false for synchronous request
@@ -446,13 +564,47 @@
             setTimeout(init, 5000);
         }
 
-
+        function loadSound () {
+            createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
+        }
 
 	</script>
 </head>
+    <style> /**centers image**/
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    </style>
 <body>
     <div id='start-screen' class='screen' style='display:block'>
-        <button onclick='calibrate()'>Start Game</button>
+        <p1 class="center">
+            <br>
+            <br>
+            <br>
+            <br>
+            natman pranibbles cool-angela kot
+            <br>
+            <br>
+            <br>
+            <br>
+        </p1>
+        <img src="assets/sprites/pacman_Logo.png">
+        <div class="center button">
+            <button onclick='calibrate()'></button>
+        </div>
+        <p class="center">
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            Pacman controlled by your mom!
+        </p>
+        
+       
     </div>
     <div id='calibrating' style="display:none">
         <div class="header">

@@ -1,0 +1,57 @@
+body {
+    background-color: #c90294;
+}
+
+p {
+    font-family: pixelation;
+    color: #f0cc4c;
+    font-size: 30px;
+    
+  }
+
+p1 {
+    font-family: pixelation;
+    color: #94cada;
+    font-size: 20px;
+    
+  }
+
+  @font-face {
+    font-family: pixelation;
+    src: url(Pixelation.ttf);
+  }
+  
+  div {
+    font-family: myFirstFont;
+  }
+
+button {   
+    background-image: url('startGame.png');   
+     padding: 50px 195px;
+     background-color: #f0cc4c;
+     color: black; 
+     border: 2px solid #cf2d28;
+
+     transition-duration: 0.4s;
+     cursor: pointer;
+}
+
+
+button:hover {
+    background-color: #cf2d28;
+    color: white;
+}
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+.center {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
