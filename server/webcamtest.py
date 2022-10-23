@@ -11,16 +11,8 @@ from flask import render_template
 from flask import send_from_directory
 import matplotlib.pyplot as plt
 import matplotlib
-from PIL import Image
 plt.ion()
 plt.show()
-
-def get_pixel_colors(image):
-    image = Image.open('client/sprites/Maze.png')
-    pix = image.load()
-    print image.size  # Get the width and hight of the image for iterating over
-    print pix[x,y]  # Get the RGBA Value of the a pixel of an image
-    imshow("windowName",image)
 
 def difference_between_x_points(points):
     top_point = points[0] #retrieving from tuple of points (0 through 2)

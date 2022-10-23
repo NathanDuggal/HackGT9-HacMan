@@ -21,10 +21,16 @@ p1 {
     font-size: 20px;
   }
 
-  p2 {
+p2 {
     font-family: pixelation;
     color: #1fd2ff;
     font-size: 160px;
+  }
+
+p3 {
+    font-family: pixelation;
+    color: #f0cc4c;
+    font-size: 260px;
   }
 
   @font-face {

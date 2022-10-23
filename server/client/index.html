@@ -71,6 +71,12 @@
             life,
             score,
             powerUp;
+            characters;
+
+        var score = 0;
+        var powerupJuice = 0;
+        var powerupJuiceBar = 0;
+        var powerUp = false;
 
         function loadSound() {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
@@ -592,6 +598,7 @@
             var background;
             let x = 0;
             let y = 0;
+            let wink = 0;
 
             if (life == 0) {
                 console.log("ended game loop (life is 0)")
@@ -609,6 +616,7 @@
 
                 x = JSON.parse(xmlHttp.responseText).x_joy;
                 y = JSON.parse(xmlHttp.responseText).y_joy;
+                wink = JSON.parse(xmlHttp.responseText).wink;
             } catch (error) { }
 
             if (isFullScreen) {
@@ -645,6 +653,15 @@
             }
 
             var newAni;
+            console.log(powerupJuice)
+            if (wink == 1 && powerupJuice > 0) {
+                powerUp = true;
+                powerupJuice = powerupJuice - 1.0/60;
+                powerupJuiceBar.value = powerupJuice;
+            }
+            else {
+                powerUp = false;
+            }
             if (Math.abs(x) > deadThresh || Math.abs(y) > deadThresh) {
                 if (Math.abs(x) - Math.abs(y) > -0.5) {
                     if (x > 0) {
@@ -758,13 +775,10 @@
                     if (!powerUp) {
                         gainPowerup();
                     }
-                    powerUp = true;
-                    setTimeout(function(){ powerUp=false }, 15000)
+                    // powerUp = true;
+                    //setTimeout(function(){ powerUp=false }, 15000)
                 }
             }
-
-            setTimeout(function(){ powerUp=false }, 15000)
-
             
         }
 
@@ -774,8 +788,9 @@
             for (let i = 0; i < ghosts.length; i++) {
                 if (spriteIntersects(ghosts[i], pacmanSize, circle, pacmanSize)) {
                     if (powerUp) {
-                        ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
-                        ghosts[i].x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
+                        ghosts[i].y = windowHeight / 2 + maze.scaleY * pacmanSize / 2 - 375;
+                        ghosts[i].x = windowWidth / 2 - maze.scaleX * pacmanSize / 2;
+                        console.log(ghosts[i]);
                         score += 200;
                     } else {
                         collided = true;
@@ -807,8 +822,8 @@
         }
 
         function gainPowerup() {
-            let powerupJuice = document.getElementById("powerup")
-            powerupJuice.value = powerupJuice.value + 10;
+            let powerupJuiceBar = document.getElementById("powerup")
+            powerupJuiceBar.value = powerupJuiceBar.value + 10;
             powerupJuice = powerupJuice + 10;
         }
 
