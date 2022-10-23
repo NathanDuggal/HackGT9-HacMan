@@ -267,7 +267,7 @@
             // Red Ghost
 			red = new createjs.Sprite(spriteSheet);
 			setScale(red);
-            sprites.push(red);
+            characters.push(red);
             red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 120;
             red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
             red.gotoAndPlay("redMoveRight");
@@ -275,7 +275,7 @@
             // Pink Ghost
 			pink = new createjs.Sprite(spriteSheet);
 			setScale(pink);
-            sprites.push(pink);
+            characters.push(pink);
             pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 120;
             pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
             pink.gotoAndPlay("pinkMoveUp");
@@ -283,7 +283,7 @@
             // Pink Ghost
 			blue = new createjs.Sprite(spriteSheet);
 			setScale(blue);
-            sprites.push(blue);
+            characters.push(blue);
             blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 - 120;
             blue.x = windowWidth/2 - blue.scaleX * pacmanSize/2;
             blue.gotoAndPlay("blueMoveRight");
@@ -291,7 +291,7 @@
             // Orange Ghost
 			orange = new createjs.Sprite(spriteSheet);
 			setScale(orange);
-            sprites.push(orange);
+            characters.push(orange);
             orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 120;
             orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
             orange.gotoAndPlay("orangeMoveUp");
@@ -376,14 +376,19 @@
                 ghost.x += -8;
             }
 
-            movementArray = [[0,-8], [0,8], [8,0], [-8,0]]
-            var possibleMovements = ["Up", "Down", "Right", "Left"]
-            var actualPossibleMovements = []
+            movementArray = [[0,-8], [0,8], [8,0], [-8,0]];
+            var possibleMovements = ["Up", "Down", "Right", "Left"];
+            var actualPossibleMovements = [];
+
+            let pixelCoords = screenToPixel(ghost.x, ghost.y)
+            var ghostX = pixelCoords.x;
+            var ghostY = pixelCoords.y;
+
             for (let j=0; j<4; j++){
                 coords = movementArray[j]
                 let isValid = true;
-                for (let i = pacmanY + coords[1] + 2; i < pacmanY + coords[1] + 14; i++) {
-                    for (let ii = pacmanX + coords[0] + 2; ii < pacmanX + coords[0] + 14; ii++) {
+                for (let i = ghostY + coords[1] + 2; i < ghostY + coords[1] + 14; i++) {
+                    for (let ii = ghostX + coords[0] + 2; ii < ghostX + coords[0] + 14; ii++) {
                         if (i >= 0 && ii >=0 && collisionMap[i][ii] == 1) {
                             isValid = false;
                         }
