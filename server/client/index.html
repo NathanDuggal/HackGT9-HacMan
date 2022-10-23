@@ -456,7 +456,6 @@
                 nextMovement = ghost.currentAnimation;
                 console.log(1)
             } else {
-                console.log(2)
                 nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             }
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
@@ -666,6 +665,7 @@
             //}
             
             movePacman();
+            checkDots();
             moveGhost(blue);
             moveGhost(red);
             moveGhost(orange);
@@ -695,6 +695,23 @@
             xmlHttp.open( "GET", "/calibrate", false); // false for synchronous request
             xmlHttp.send();
             setTimeout(init, 5000);
+        }
+
+        function checkDots() {
+            for (let i = 0; i < smallDots.length; i++) {
+                let dot = smallDots[i];
+                if (spriteIntersects(circle, pacmanSize, dot, 2)) {
+                    smallDots.splice(i,1);
+                    stage.removeChild(dot);
+                }
+            }
+        }
+
+        function spriteIntersects(sprite1, size1, sprite2, size2) {
+            return sprite1.x < (sprite2.x + maze.scaleX * size2/2) && 
+                   (sprite1.x + maze.scaleX * size1/2) > sprite2.x && 
+                   sprite1.y < (sprite2.y + maze.scaleY * size2/2) && 
+                   (sprite1.y + maze.scaleY * size1/2) > sprite2.y
         }
 
 	</script>
