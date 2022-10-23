@@ -68,7 +68,6 @@
             bigDots = [], 
             characters = [];
         
-        var life = 3;
         var score = 0;
 
         function loadSound () {
@@ -417,17 +416,10 @@
 
         function start() {
             console.log("entered start function");
-            if (life > 0){
             // Start game loop
-                console.log("started game loop");
-                createjs.Ticker.framerate = 60;
-			    createjs.Ticker.on("tick", tick);
-            }
-            else{
-                console.log("ended game loop (life is 0)")
-                createjs.Ticker.paused = true;
-                gameOver();
-            }
+            console.log("started game loop");
+            createjs.Ticker.framerate = 60;
+			createjs.Ticker.on("tick", tick);
         }
 
         function moveGhost(ghost) {
@@ -584,6 +576,11 @@
             let x = 0;
             let y = 0;
 
+            if (life == 0) {
+                console.log("ended game loop (life is 0)")
+                createjs.Ticker.paused = true;
+                gameOver();
+            }
             try {
                 //throw new Error();
                 var xmlHttp = new XMLHttpRequest();
@@ -734,6 +731,7 @@
                     ghosts[i].y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 400;
                     ghosts[i].x = windowWidth/2 - pink.scaleX * pacmanSize/2;
                 }
+                life--;
             }
         }
 
