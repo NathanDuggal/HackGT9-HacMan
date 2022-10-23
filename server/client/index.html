@@ -55,7 +55,6 @@
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
         }
 
-        var life = 3;
         var circle,
             maze,
             characterImage,
@@ -68,12 +67,10 @@
             chomp,
             smallDots, 
             bigDots, 
-            characters;
-
-        var score = 0;
-        var powerupJuice = 0;
-        var powerUp = false;
-
+            characters,
+            life,
+            score,
+            powerUp;
 
         function loadSound() {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
@@ -306,6 +303,10 @@
             // Set up game loop
             // -----------------
 
+            life = 3;
+            score = 0;
+            powerUp = false;
+
             stage = new createjs.Stage("mainCanvas");
 
             // Background
@@ -433,6 +434,10 @@
         }
 
         function gameOver() {
+
+            // Pause ticker
+            createjs.Ticker.on("tick", a => {});
+
             console.log("called game over");
             //this.toggleScreen('start-screen', false);
             this.toggleScreen('mainCanvas', false);
@@ -584,7 +589,7 @@
 
             if (life == 0) {
                 console.log("ended game loop (life is 0)")
-                createjs.Ticker.paused = true;
+                //createjs.Ticker.paused = true;
                 gameOver();
             }
 
@@ -708,11 +713,7 @@
         }
 
         function resetGame() {
-            console.log("here")
-            life = 3;
-            score=0;
-
-            createjs.Ticker.on("tick", a => {});
+            // Reinitialize variables
             stage.removeAllChildren();
             let canvas = document.getElementById('mainCanvas');
             let context = canvas.getContext('2d');
