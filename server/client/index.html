@@ -53,7 +53,8 @@
         function loadSound () {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
         }
-
+        
+        var life = 3;
 		var circle, 
             maze, 
             characterImage, 
@@ -308,7 +309,7 @@
 			red = new createjs.Sprite(spriteSheet);
 			setScale(red);
             characters.push(red);
-            red.y = windowHeight/2 + red.scaleY * pacmanSize/2 + 4;
+            red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 400;
             red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
             red.lastAnimation = "redMoveRight"
             red.gotoAndPlay("redMoveRight");
@@ -317,7 +318,7 @@
 			pink = new createjs.Sprite(spriteSheet);
 			setScale(pink);
             characters.push(pink);
-            pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 + 4;
+            pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 400;
             pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
             pink.lastAnimation = "pinkMoveRight"
             pink.gotoAndPlay("pinkMoveRight");
@@ -326,7 +327,7 @@
 			blue = new createjs.Sprite(spriteSheet);
 			setScale(blue);
             characters.push(blue);
-            blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 + 4;
+            blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 - 400;
             blue.x = windowWidth/2 - blue.scaleX * pacmanSize/2;
             blue.lastAnimation = "blueMoveRight"
             blue.gotoAndPlay("blueMoveRight");
@@ -335,7 +336,7 @@
 			orange = new createjs.Sprite(spriteSheet);
 			setScale(orange);
             characters.push(orange);
-            orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 + 4;
+            orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 400;
             orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
             orange.lastAnimation = "orangeMoveRight"
             orange.gotoAndPlay("orangeMoveRight");
@@ -663,7 +664,9 @@
             //if (circle.y > windowHeight) {
             //    circle.y = windowHeight;
             //}
-            
+            ghosts = [blue, red, orange, pink]
+            ghosts.forEach(a => (moveGhost(a)))
+            checkGhosts(ghosts)
             movePacman();
             checkDots();
             moveGhost(blue);
@@ -703,6 +706,21 @@
                 if (spriteIntersects(circle, pacmanSize, dot, 2)) {
                     smallDots.splice(i,1);
                     stage.removeChild(dot);
+                }
+            }
+        }
+
+        function checkGhosts(ghosts) {
+            let collided = false;
+            for (let i = 0; i < ghosts.length; i++) {
+                if (spriteIntersects(ghosts[i], pacmanSize, circle, pacmanSize)) {
+                    collided = true;
+                }
+            }
+            if (collided) {
+                for (let i = 0; i < ghosts.length; i++) {
+                    ghosts[i].y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 400;
+                    ghosts[i].x = windowWidth/2 - pink.scaleX * pacmanSize/2;
                 }
             }
         }
