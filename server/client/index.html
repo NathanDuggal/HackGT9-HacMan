@@ -96,6 +96,11 @@
                 }    
             }
 
+            collectablesImage = {
+                images: ["assets/sprites/Dots.png"],
+                frames: {width:8, height:8, spacing: 1}
+            }
+
 
             cv = document.createElement("CANVAS");
             c = cv.getContext("2d");
@@ -105,6 +110,7 @@
 
             console.log(imgData);
 
+            collectablesSheet = new createjs.SpriteSheet(collectablesImage);
             textSheet = new createjs.SpriteSheet(textImage);
             spriteSheet = new createjs.SpriteSheet(characters);
             mazeSheet = new createjs.SpriteSheet(mazeImage);
