@@ -515,11 +515,11 @@
                 }
             }
 
-            if (circle.x - pacmanSize > windowWidth/2 + maze.scaleX * mazeWidth/2) {
+            if (circle.x > windowWidth/2 + maze.scaleX * mazeWidth/2 - maze.scaleX * pacmanSize) {
                 circle.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
             }
             if (circle.x < windowWidth/2 - maze.scaleX * mazeWidth/2) {
-                circle.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - pacmanSize;
+                circle.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - maze.scaleX * pacmanSize;
             }
         }
 
@@ -665,7 +665,7 @@
         function checkDots() {
             for (let i = 0; i < smallDots.length; i++) {
                 let dot = smallDots[i];
-                if (spriteIntersects(circle, pacmanSize, dot, 6)) {
+                if (spriteIntersects(circle, pacmanSize, dot, 2)) {
                     smallDots.splice(i, 1);
                     stage.removeChild(dot);
                     chomp = createjs.Sound.play("chomp");
