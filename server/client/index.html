@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"> </script>
     <link rel="stylesheet" href="assets/sprites/style.css">
     <script>
 
@@ -49,6 +49,10 @@
         //lol sample
         Array.prototype.sample = function(){
             return this[Math.floor(Math.random()*this.length)];
+        }
+
+        function loadSound () {
+            createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
         }
 
 		var circle, 
@@ -278,9 +282,9 @@
             characters.push(pink);
             pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 120;
             pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
-            pink.gotoAndPlay("pinkMoveUp");
+            pink.gotoAndPlay("pinkMoveRight");
 
-            // Pink Ghost
+            // Blue Ghost
 			blue = new createjs.Sprite(spriteSheet);
 			setScale(blue);
             characters.push(blue);
@@ -294,7 +298,7 @@
             characters.push(orange);
             orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 120;
             orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
-            orange.gotoAndPlay("orangeMoveUp");
+            orange.gotoAndPlay("orangeMoveRight");
             
             // Small Dots
             for (let i = 0; i < smallDotMap.length; i++) {
@@ -398,9 +402,16 @@
                     actualPossibleMovements.push(possibleMovements[j])
                 }
             }
-
+            // if (actualPossibleMovements.includes(ghost.lastAnimation)){
+            //     ghost.gotoAndPlay(ghost.lastAnimation);
+            // } else {
+            //     var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            //     ghost.gotoAndPlay(nextMovement);
+            // }
             var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            ghost.lastAnimation = ghost.currentAnimation
             ghost.gotoAndPlay(nextMovement);
+            
         }
 
 
@@ -581,8 +592,8 @@
             //}
             
             movePacman();
-            moveGhost(red);
             moveGhost(blue);
+            moveGhost(red);
             moveGhost(orange);
             moveGhost(pink);
         }
@@ -610,10 +621,6 @@
             xmlHttp.open( "GET", "/calibrate", false); // false for synchronous request
             xmlHttp.send();
             setTimeout(init, 5000);
-        }
-
-        function loadSound () {
-            createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
         }
 
 	</script>
