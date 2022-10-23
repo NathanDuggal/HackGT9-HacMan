@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <link rel="stylesheet" href="assets/sprites/style.css">
     <script>
 
         // Screen properties
@@ -421,9 +421,41 @@
 
 	</script>
 </head>
+    <style> /**centers image**/
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    </style>
 <body>
     <div id='start-screen' class='screen' style='display:block'>
-        <button onclick='calibrate()'>Start Game</button>
+        <p1 class="center">
+            <br>
+            <br>
+            <br>
+            <br>
+            natman pranibbles cool-angela kot
+            <br>
+            <br>
+            <br>
+            <br>
+        </p1>
+        <img src="assets/sprites/pacman_Logo.png">
+        <div class="center button">
+            <button onclick='calibrate()'></button>
+        </div>
+        <p class="center">
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            Pacman controlled by your mom!
+        </p>
+        
+       
     </div>
     <div id='calibrating' style="display:none">
         <div class="header">
