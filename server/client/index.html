@@ -64,6 +64,7 @@
             ctx, 
             isFullScreen,
             score, 
+            chomp,
             smallDots = [], 
             bigDots = [], 
             characters = [];
@@ -96,6 +97,9 @@
             isDead = false;
             anim_speed = 0.1
             score = 0;
+
+            var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5})
+            background = createjs.Sound.play("backgroundMusic", backgroundProps);
 
             characterImage = {
                 images: ["assets/sprites/Pacman.png"],
