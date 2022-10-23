@@ -13,7 +13,12 @@ p1 {
     font-family: pixelation;
     color: #94cada;
     font-size: 20px;
-    
+  }
+
+  p2 {
+    font-family: pixelation;
+    color: #1fd2ff;
+    font-size: 160px;
   }
 
   @font-face {
@@ -41,6 +46,11 @@ button:hover {
     background-color: #cf2d28;
     color: white;
 }
+
+img.animated-gif{
+    width: 120px;
+    height: auto;
+  }
 
 .vertical-center {
     margin: 0;
