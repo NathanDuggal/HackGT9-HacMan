@@ -472,9 +472,9 @@
             }
             if (actualPossibleMovements.includes(ghost.currentAnimation.split("Move")[1]) && Math.random() > 0.02) {
                 nextMovement = ghost.currentAnimation;
-                console.log(1)
+                //console.log(1)
             } else {
-                console.log(2)
+                //console.log(2)
                 nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             }
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
@@ -662,6 +662,18 @@
             setTimeout(init, 5000);
         }
 
+        function resetGame() {
+            console.log("here")
+            life = 3;
+            score=0;
+
+            createjs.Ticker.on("tick", a => []);
+            stage.removeAllChildren();
+            let context = document.getElementById('mainCanvas').getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            calibrate();
+        }
+
         function checkDots() {
             for (let i = 0; i < smallDots.length; i++) {
                 let dot = smallDots[i];
@@ -766,7 +778,7 @@
             <br>
         <p>
         <div class="center button">
-            <button onclick='calibrate()'></button>
+            <button onclick='resetGame()'></button>
         </div>
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
