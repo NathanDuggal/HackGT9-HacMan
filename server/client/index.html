@@ -89,6 +89,7 @@
             isBackgroundPlaying = false;
             isJojiPlaying = false;
             isDead = false;
+            anim_speed = 0.1
 
             characterImage = {
                 images: ["assets/sprites/Pacman.png"],
@@ -96,90 +97,111 @@
                 animations: {
                     pacmanIdleRight:0,
                     pacmanMoveRight:{
-                        frames: [0,1,2]
+                        frames: [0,1,2],
+                        speed: anim_speed
                     },
                     pacmanIdleLeft:14,
                     pacmanMoveLeft:{
-                        frames: [14,15,2]
+                        frames: [14,15,2],
+                        speed: anim_speed
                     },
                     pacmanIdleUp:28,
                     pacmanMoveUp:{
-                        frames: [28,29,2]
+                        frames: [28,29,2],
+                        speed: anim_speed
                     },
                     pacmanIdleDown:42,
                     pacmanMoveDown:{
-                        frames: [42,43,2]
+                        frames: [42,43,2],
+                        speed: anim_speed
                     },
                     redIdleRight:56,
                     redMoveRight:{
-                        frames: [56,57]
+                        frames: [56,57],
+                        speed: anim_speed
                     },
                     redIdleLeft:58,
                     redMoveLeft:{
-                        frames: [58,59]
+                        frames: [58,59],
+                        speed: anim_speed
                     },
                     redIdleUp:60,
                     redMoveUp:{
-                        frames: [60,61]
+                        frames: [60,61],
+                        speed: anim_speed
                     },
                     redIdleDown:62,
                     redMoveDown:{
-                        frames: [62,63]
+                        frames: [62,63],
+                        speed: anim_speed
                     },
                     
                     deadMove:{
-                        frames: [64,65,66,67]
+                        frames: [64,65,66,67],
+                        speed: anim_speed
                     },
 
                     pinkIdleRight:70,
                     pinkMoveRight:{
-                        frames: [70,71]
+                        frames: [70,71],
+                        speed: anim_speed
                     },
                     pinkIdleLeft:72,
                     pinkMoveLeft:{
-                        frames: [72,73]
+                        frames: [72,73],
+                        speed: anim_speed
                     },
                     pinkIdleUp:74,
                     pinkMoveUp:{
-                        frames: [74,75]
+                        frames: [74,75],
+                        speed: anim_speed
                     },
                     pinkIdleDown:76,
                     pinkMoveDown:{
-                        frames: [76,77]
+                        frames: [76,77],
+                        speed: anim_speed
                     },
 
                     blueIdleRight:84,
                     blueMoveRight:{
-                        frames: [84,85]
+                        frames: [84,85],
+                        speed: anim_speed
                     },
                     blueIdleLeft:86,
                     blueMoveLeft:{
-                        frames: [86,87]
+                        frames: [86,87],
+                        speed: anim_speed
                     },
                     blueIdleUp:88,
                     blueMoveUp:{
-                        frames: [88,89]
+                        frames: [88,89],
+                        speed: anim_speed
                     },
                     blueIdleDown:90,
                     blueMoveDown:{
-                        frames: [90,91]
+                        frames: [90,91],
+                        speed: anim_speed
                     },
 
                     orangeIdleRight:98,
                     orangeMoveRight:{
-                        frames: [98,99]
+                        frames: [98,99],
+                        speed: anim_speed
                     },
                     orangeIdleLeft:100,
                     orangeMoveLeft:{
-                        frames: [100,101]
+                        frames: [100,101],
+                        speed: anim_speed
                     },
                     orangeIdleUp:102,
                     orangeMoveUp:{
-                        frames: [102,103]
+                        frames: [102,103],
+                        speed: anim_speed
                     },
                     orangeIdleDown:104,
                     orangeMoveDown:{
-                        frames: [104,105]
+                        frames: [104,105],
+                        speed: anim_speed
                     },
 
                     
@@ -284,7 +306,7 @@
 			red = new createjs.Sprite(spriteSheet);
 			setScale(red);
             characters.push(red);
-            red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 120;
+            red.y = windowHeight/2 + red.scaleY * pacmanSize/2 + 4;
             red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
             red.lastAnimation = "redMoveRight"
             red.gotoAndPlay("redMoveRight");
@@ -293,7 +315,7 @@
 			pink = new createjs.Sprite(spriteSheet);
 			setScale(pink);
             characters.push(pink);
-            pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 120;
+            pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 + 4;
             pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
             pink.lastAnimation = "pinkMoveRight"
             pink.gotoAndPlay("pinkMoveRight");
@@ -302,7 +324,7 @@
 			blue = new createjs.Sprite(spriteSheet);
 			setScale(blue);
             characters.push(blue);
-            blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 - 120;
+            blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 + 4;
             blue.x = windowWidth/2 - blue.scaleX * pacmanSize/2;
             blue.lastAnimation = "blueMoveRight"
             blue.gotoAndPlay("blueMoveRight");
@@ -311,7 +333,7 @@
 			orange = new createjs.Sprite(spriteSheet);
 			setScale(orange);
             characters.push(orange);
-            orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 120;
+            orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 + 4;
             orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
             orange.lastAnimation = "orangeMoveRight"
             orange.gotoAndPlay("orangeMoveRight");
@@ -380,23 +402,26 @@
 
         function start() {
             // Start game loop
+            createjs.Ticker.framerate = 60;
 			createjs.Ticker.on("tick", tick);
+
         }
 
         function moveGhost(ghost) {
             const beforeX = ghost.x;
             const beforeY = ghost.y;
+            move_value = 2;
             if (ghost.currentAnimation.includes("MoveUp")) {
-                ghost.y += -8;
+                ghost.y += -move_value;
             } else if (ghost.currentAnimation.includes("MoveDown")) {
-                ghost.y += 8;
+                ghost.y += move_value;
             } else if (ghost.currentAnimation.includes("MoveRight")) {
-                ghost.x += 8;
+                ghost.x += move_value;
             } else if (ghost.currentAnimation.includes("MoveLeft")) {
-                ghost.x += -8;
+                ghost.x += -move_value;
             }
 
-            movementArray = [[0,-8], [0,8], [8,0], [-8,0]];
+            movementArray = [[0,-move_value], [0,move_value], [move_value,0], [-move_value,0]];
             var possibleMovements = ["Up", "Down", "Right", "Left"];
             var actualPossibleMovements = [];
             var nextMovement;
@@ -419,16 +444,15 @@
                     actualPossibleMovements.push(possibleMovements[j])
                 }
             }
-
-            if (actualPossibleMovements.includes(ghost.lastAnimation.split("Move")[1])){
-                nextMovement = ghost.lastAnimation;
+            if (actualPossibleMovements.includes(ghost.currentAnimation.split("Move")[1]) && Math.random()>0.02){
+                nextMovement = ghost.currentAnimation;
                 console.log(1)
             } else {
                 console.log(2)
                 nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             }
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
-            ghost.lastAnimation = ghost.currentAnimation
+            // ghost.lastAnimation = ghost.currentAnimation
             ghost.gotoAndPlay(nextMovement);
             
         }
@@ -439,14 +463,16 @@
             const beforeX = circle.x;
             const beforeY = circle.y;
 
+            move_value = 2
+
             if (circle.currentAnimation == "pacmanMoveUp") {
-                circle.y += -8;
+                circle.y += -move_value;
             } else if (circle.currentAnimation == "pacmanMoveDown") {
-                circle.y += 8;
+                circle.y += move_value;
             } else if (circle.currentAnimation == "pacmanMoveRight") {
-                circle.x += 8;
+                circle.x += move_value;
             } else if (circle.currentAnimation == "pacmanMoveLeft") {
-                circle.x += -8;
+                circle.x += -move_value;
             }
 
             // const pacmanTopSide = circle.y;
