@@ -480,6 +480,13 @@
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             // ghost.lastAnimation = ghost.currentAnimation
             ghost.gotoAndPlay(nextMovement);
+
+            if (ghost.x > windowWidth/2 + maze.scaleX * mazeWidth/2 - maze.scaleX * pacmanSize) {
+                ghost.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
+            }
+            if (ghost.x < windowWidth/2 - maze.scaleX * mazeWidth/2) {
+                ghost.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - maze.scaleX * pacmanSize;
+            }
         }
 
 
