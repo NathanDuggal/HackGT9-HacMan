@@ -758,6 +758,11 @@
                    (sprite1.y + maze.scaleY * size1) > sprite2.y
         }
 
+        function gainPowerup() {
+            let powerupJuice = document.getElementById("powerup")
+            powerupJuice.value += 10;
+        }
+
     </script>
 </head>
 
@@ -825,6 +830,7 @@
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
+        <progress id="powerup" value="0" max="40"></progress>
     </canvas>
 </body>
 
