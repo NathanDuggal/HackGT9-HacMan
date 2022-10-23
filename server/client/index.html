@@ -42,10 +42,15 @@
         var lastAni = "pacmanIdleRight";
 
         // Instance variables
-		var circle, maze, characters, spriteSheet, stage, canvas, ctx, isFullScreen, isBackgroundPlaying, sprites = [];
+		var circle, maze, characters, spriteSheet, stage, canvas, ctx, isFullScreen, isBackgroundPlaying, isDead, isJojiPlaying, sprites = [];
 
         function loadSound () {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
+            createjs.Sound.registerSound("assets/sprites/Chomp.mp3", "chomp");
+            createjs.Sound.registerSound("assets/sprites/Cutscene.mp3", "cutscene");
+            createjs.Sound.registerSound("assets/sprites/Death.mp3", "death");
+            createjs.Sound.registerSound("assets/sprites/Ghost.mp3", "ghost");
+            createjs.Sound.registerSound("assets/sprites/glimpseOfUs.mp3", "glimpseOfUs");
         }
 
 		function init() {
@@ -59,6 +64,18 @@
 
             loadSound();
             isBackgroundPlaying = false;
+            isJojiPlaying = false;
+            isDead = true;
+
+            /*var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, muted: false})
+            //backgroundMusic = createjs.Sound.play("backgroundMusic", backgroundProps);
+            
+            
+            if (isDead) {
+                //backgroundMusic.paused = true;
+                createjs.Sound.play("glimpseOfUs", backgroundProps);
+            }*/
+
             characters = {
                 images: ["assets/sprites/Pacman.png"],
                 frames: {width:16, height:16},
@@ -316,6 +333,7 @@
             
             var x = 0;
             var y = 0;
+            var background;
             try {
                 var xmlHttp = new XMLHttpRequest();
                 
@@ -327,11 +345,22 @@
             } catch (error) {}
 
             if (isFullScreen) {
+                
                 if (!isBackgroundPlaying) {
-                    var backgroundProps = new createjs.PlayPropsConfig().set({loop: -1})
-                    createjs.Sound.play("backgroundMusic", backgroundProps);
+                    var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5})
+                    background = createjs.Sound.play("backgroundMusic", backgroundProps);
                     isBackgroundPlaying = true;
                 }
+
+                
+                if(isDead && !isJojiPlaying) {
+                    var jojiProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.8})
+                    //background.paused = true;
+                    createjs.Sound.stop("backgroundMusic", backgroundProps);
+                    createjs.Sound.play("glimpseOfUs", jojiProps);
+                    isJojiPlaying = true;
+                }
+                
                 
                 if (canvas.getContext) {
                     ctx.fillStyle = "rgba(0, 0, 0, 255)";
