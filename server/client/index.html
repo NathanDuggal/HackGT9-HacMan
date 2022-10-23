@@ -373,8 +373,6 @@
 		}
 
         function displayMenu() {
-            console.log('b'.charCodeAt(0) - 97);
-            console.log(makeSpriteString("hi"));
             //displaySpriteString(100,100,makeSpriteString("hello"));
             stage.addChild(new Sprite(textSheet, 0));
             stage.update(null);
@@ -403,10 +401,18 @@
         } 
 
         function start() {
+            console.log("entered start function");
+            if (life > 0){
             // Start game loop
-            createjs.Ticker.framerate = 60;
-			createjs.Ticker.on("tick", tick);
-
+                console.log("started game loop");
+                createjs.Ticker.framerate = 60;
+			    createjs.Ticker.on("tick", tick);
+            }
+            else{
+                console.log("ended game loop (life is 0)")
+                createjs.Ticker.paused = true;
+                gameOver();
+            }
         }
 
         function moveGhost(ghost) {
@@ -691,13 +697,6 @@
 
 	</script>
 </head>
-    <style> /**centers image**/
-    img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    </style>
 <body>
     <div id='start-screen' class='screen' style='display:block'>
         <p1 class="center">
@@ -726,7 +725,7 @@
         </p>
     </div>
 
-    <div id='calibrating' class='screen' style="display:none">
+    <div id='calibrating' class='screen' style='display:none'>
         <p class="center">
             <br>
             <br>
@@ -746,6 +745,11 @@
             <br>
         </p1>
         <img class="animated-gif" src="assets/sprites/calibrating.gif">
+    </div>
+    <div id='gameover-screen' class='screen' style='display:none'>
+        <p>
+            Game over
+        <p>
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
