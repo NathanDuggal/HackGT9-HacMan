@@ -81,7 +81,6 @@
 
 		function init() {
             var z1 = document.getElementById("calibrating");
-            z1.style.display = "none"
             this.toggleScreen('start-screen', false);
             this.toggleScreen('gameover-screen', false);
             this.toggleScreen('mainCanvas', true);
@@ -685,7 +684,6 @@
             } else {
                 if (circle.lastAni != undefined) {
                     newAni = circle.lastAni.replace("Move", "Idle");
-                }
             }
             if (newAni != circle.lastAni) {
                 circle.gotoAndPlay(newAni);
