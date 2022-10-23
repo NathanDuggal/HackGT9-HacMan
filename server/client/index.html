@@ -82,6 +82,9 @@
 
 		function init() {
             var z1 = document.getElementById("calibrating");
+            z1.style.display = "none";
+            var z2 = document.getElementById("gameover-screen");
+            z2.style.display = "none";
             this.toggleScreen('start-screen', false);
             this.toggleScreen('gameover-screen', false);
             this.toggleScreen('mainCanvas', true);
@@ -500,6 +503,7 @@
                 nextMovement = ghost.currentAnimation;
                 console.log(1)
             } else {
+                console.log(2)
                 nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             }
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
@@ -643,7 +647,7 @@
                 if (canvas.getContext) {
                     ctx.font = "20px pixelation";
                     ctx.fillText("Joystick ", gamepadX, gamepadY - 10);
-                    ctx.fillStyle = "rgba(0, 0, 0, 255)";
+                    ctx.fillStyle = "#94cada";
                     ctx.clearRect(gamepadX, gamepadY, 100,100);
                     ctx.beginPath();
                     ctx.rect(gamepadX, gamepadY, 100, 100);
@@ -652,7 +656,7 @@
 
                     ctx.beginPath();
                     ctx.arc(initCircleX + x * 30, initCircleY - y * 30, 20, 0, 2*Math.PI);
-                    ctx.fillStyle = "#c90294";
+                    ctx.fillStyle = "#94cada";
                     ctx.fill();
 
                     ctx.font = "30px pixelation";
@@ -684,6 +688,7 @@
             } else {
                 if (circle.lastAni != undefined) {
                     newAni = circle.lastAni.replace("Move", "Idle");
+            }
             }
             if (newAni != circle.lastAni) {
                 circle.gotoAndPlay(newAni);
@@ -730,6 +735,8 @@
             //make button disapear and calibrating text appear
             var w = document.getElementById("start-screen");
             w.style.display = "none";
+            var w2 = document.getElementById("gameover-screen");
+            w2.style.display = "none";
             var x = document.getElementById("calibrating");
             x.style.display = "block";
             //setTimeout(tester, 1000);
@@ -832,13 +839,16 @@
     </div>
     <div id='gameover-screen' class='screen' style='display:none'>
         <p class='center'>
-            <br>
-            <br>
             Game over :(
-            <div class="center button">
-                <button onclick='calibrate()'></button>
-            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
         <p>
+        <div class="center button">
+            <button onclick='calibrate()'></button>
+        </div>
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
