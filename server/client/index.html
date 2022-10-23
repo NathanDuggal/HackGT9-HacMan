@@ -67,6 +67,15 @@
             bigDots = [], 
             characters = [];
 
+        function loadSound () {
+            createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
+            createjs.Sound.registerSound("assets/sprites/Chomp.mp3", "chomp");
+            createjs.Sound.registerSound("assets/sprites/Cutscene.mp3", "cutscene");
+            createjs.Sound.registerSound("assets/sprites/Death.mp3", "death");
+            createjs.Sound.registerSound("assets/sprites/Ghost.mp3", "ghost");
+            createjs.Sound.registerSound("assets/sprites/glimpseOfUs.mp3", "glimpseOfUs");
+        }
+
 		function init() {
             var z1 = document.getElementById("calibrating");
             z1.style.display = "none"
@@ -78,6 +87,9 @@
 
             loadSound();
             isBackgroundPlaying = false;
+            isJojiPlaying = false;
+            isDead = false;
+
             characterImage = {
                 images: ["assets/sprites/Pacman.png"],
                 frames: {width:16, height:16},
@@ -307,7 +319,7 @@
             // Small Dots
             for (let i = 0; i < smallDotMap.length; i++) {
                 for (let ii = 0; ii < smallDotMap[0].length; ii++) {
-                    console.log(i + " " + ii);
+                    //console.log(i + " " + ii);
                     if (smallDotMap[i][ii]==1) {
                         let screenCoords = pixelToScreen(ii,i);
                         let dot = new createjs.Sprite(smallDotSheet);
@@ -521,12 +533,14 @@
         function tick(event) {
             stage.update(event);
 
-            
+            var background;
             let x = 0;
             let y = 0;
+
             try {
                 //throw new Error();
                 var xmlHttp = new XMLHttpRequest();
+                //var background;
                 
                 xmlHttp.open( "GET", "/data", false ); // false for synchronous request
                 xmlHttp.send();
@@ -536,10 +550,19 @@
             } catch (error) {}
 
             if (isFullScreen) {
+                
                 if (!isBackgroundPlaying) {
-                    var backgroundProps = new createjs.PlayPropsConfig().set({loop: -1})
-                    createjs.Sound.play("backgroundMusic", backgroundProps);
+                    var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5})
+                    //createjs.Sound.play("glimpseOfUs", jojiProps);
+                    background = createjs.Sound.play("backgroundMusic", backgroundProps);
                     isBackgroundPlaying = true;
+                }
+                
+                if(isDead && !isJojiPlaying) {
+                    var jojiProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.8})
+                    background.paused = true;
+                    createjs.Sound.play("glimpseOfUs", jojiProps);
+                    isJojiPlaying = true;
                 }
                 
                 if (canvas.getContext) {
