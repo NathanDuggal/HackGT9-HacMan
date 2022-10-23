@@ -71,6 +71,7 @@
             characters = [];
 
         var score = 0;
+        var powerupJuice = 0;
         var powerUp = false;
 
 
@@ -84,13 +85,20 @@
         }
 
         function init() {
-            var z1 = document.getElementById("calibrating");
-            z1.style.display = "none";
-            var z2 = document.getElementById("gameover-screen");
-            z2.style.display = "none";
             this.toggleScreen('start-screen', false);
             this.toggleScreen('gameover-screen', false);
+            this.toggleScreen('powerup-screen',true);
             this.toggleScreen('mainCanvas', true);
+            this.toggleScreen('calibrating', false);
+
+            //KOT!!!
+            // var z1 = document.getElementById("calibrating");
+            // z1.style.display = "none";
+            // var z2 = document.getElementById("gameover-screen");
+            // z2.style.display = "none";
+            // var m = document.getElementById("powerup-screen");
+            // m.style.display = "none";
+
             // -----------------
             // Initialize Assets
             // -----------------
@@ -423,6 +431,7 @@
             console.log("called game over");
             //this.toggleScreen('start-screen', false);
             this.toggleScreen('mainCanvas', false);
+            this.toggleScreen('powerup-screen', false);
             this.toggleScreen('gameover-screen', true);
             console.log("toggled screens to show game over screen");
         }
@@ -669,12 +678,22 @@
 
         function calibrate() {
             //make button disapear and calibrating text appear
-            var w = document.getElementById("start-screen");
-            w.style.display = "none";
-            var w2 = document.getElementById("gameover-screen");
-            w2.style.display = "none";
-            var x = document.getElementById("calibrating");
-            x.style.display = "block";
+            this.toggleScreen('start-screen', false);
+            this.toggleScreen('gameover-screen', false);
+            this.toggleScreen('powerup-screen',false);
+            this.toggleScreen('mainCanvas', false);
+            this.toggleScreen('calibrating', true);
+
+            //KOT!!!
+            // var w = document.getElementById("start-screen");
+            // w.style.display = "none";
+            // var w2 = document.getElementById("gameover-screen");
+            // w2.style.display = "none";
+            // var x = document.getElementById("calibrating");
+            // x.style.display = "block";
+            // var p = document.getElementById("powerup-screen");
+            // p.style.display = "none";
+
             //setTimeout(tester, 1000);
             var xmlHttp = new XMLHttpRequest();
 
@@ -714,9 +733,13 @@
                     bigDots.splice(i, 1);
                     stage.removeChild(dot);
                     chomp = createjs.Sound.play("chomp");
+                    if (!powerUp) {
+                        gainPowerup();
+                    }
                     powerUp = true;
                 }
             }
+
             setTimeout(function(){ powerUp=false }, 15000)
         }
 
@@ -752,11 +775,13 @@
 
         function gainPowerup() {
             let powerupJuice = document.getElementById("powerup")
-            powerupJuice.value += 10;
+            powerupJuice.value = powerupJuice.value + 10;
+            powerupJuice = powerupJuice + 10;
         }
 
     </script>
 </head>
+
 
 <body>
     <div id='start-screen' class='screen' style='display:block'>
@@ -820,9 +845,11 @@
             <button onclick='resetGame()'></button>
         </div>
     </div>
+    <div id='powerup-screen' class='screen center' style='display:none'>
+        <progress id="powerup" value="0" max="40"></progress>
+    </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
-        <progress id="powerup" value="0" max="40"></progress>
     </canvas>
 </body>
 
