@@ -72,7 +72,80 @@
                     pacmanIdleDown:42,
                     pacmanMoveDown:{
                         frames: [42,43,2]
-                    }
+                    },
+                    redIdleRight:56,
+                    redMoveRight:{
+                        frames: [56,57]
+                    },
+                    redIdleLeft:58,
+                    redMoveLeft:{
+                        frames: [58,59]
+                    },
+                    redIdleUp:60,
+                    redMoveUp:{
+                        frames: [60,61]
+                    },
+                    redIdleDown:62,
+                    redMoveDown:{
+                        frames: [62,63]
+                    },
+                    
+                    deadMove:{
+                        frames: [64,65,66,67]
+                    },
+
+                    pinkIdleRight:70,
+                    pinkMoveRight:{
+                        frames: [70,71]
+                    },
+                    pinkIdleLeft:72,
+                    pinkMoveLeft:{
+                        frames: [72,73]
+                    },
+                    pinkIdleUp:74,
+                    pinkMoveUp:{
+                        frames: [74,75]
+                    },
+                    pinkIdleDown:76,
+                    pinkMoveDown:{
+                        frames: [76,77]
+                    },
+
+                    blueIdleRight:84,
+                    blueMoveRight:{
+                        frames: [84,85]
+                    },
+                    blueIdleLeft:86,
+                    blueMoveLeft:{
+                        frames: [86,87]
+                    },
+                    blueIdleUp:88,
+                    blueMoveUp:{
+                        frames: [88,89]
+                    },
+                    blueIdleDown:90,
+                    blueMoveDown:{
+                        frames: [90,91]
+                    },
+
+                    orangeIdleRight:98,
+                    orangeMoveRight:{
+                        frames: [98,99]
+                    },
+                    orangeIdleLeft:100,
+                    orangeMoveLeft:{
+                        frames: [100,101]
+                    },
+                    orangeIdleUp:102,
+                    orangeMoveUp:{
+                        frames: [102,103]
+                    },
+                    orangeIdleDown:104,
+                    orangeMoveDown:{
+                        frames: [104,105]
+                    },
+
+                    
                 }
             };
 
@@ -171,8 +244,15 @@
             sprites.push(circle);
             circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2 + 4;
             circle.x = windowWidth/2 - circle.scaleX * pacmanSize/2;
-
             circle.gotoAndPlay("pacmanIdleRight");
+
+            // Red Ghost
+			red = new createjs.Sprite(spriteSheet);
+			setScale(red);
+            sprites.push(red);
+            red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 120;
+            red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
+            red.gotoAndPlay("redIdleRight");
 			
             // 
             sprites.forEach(sprite => {
