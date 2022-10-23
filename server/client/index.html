@@ -424,36 +424,6 @@
             console.log("toggled screens to show game over screen");
         }
 
-        function displayMenu() {
-            //console.log('b'.charCodeAt(0) - 97);
-            //console.log(makeSpriteString("hi"));
-            //displaySpriteString(100,100,makeSpriteString("hello"));
-            stage.addChild(new Sprite(textSheet, 0));
-            stage.update(null);
-        }
-
-        function makeSpriteString(string) {
-
-            characterImage = [];
-
-            while (string.length > 0) {
-                characterImage.push(new createjs.Sprite(textSheet, string.charCodeAt(0) - 97));
-                string = string.substring(1);
-            }
-
-            return characterImage;
-        }
-
-        function displaySpriteString(x,y,sprites) {
-            while (sprites.length > 0) {
-                sprites[0].x = x;
-                sprites[0].y = y;
-                stage.addChild(sprites[0]);
-                sprites.splice(0,1);
-                x+=8;
-            }
-        } 
-
         function start() {
             console.log("entered start function");
             // Start game loop
@@ -529,40 +499,9 @@
                 circle.x += -move_value;
             }
 
-            // const pacmanTopSide = circle.y;
-            // const pacmanBottomSide = circle.y + circle.scaleY * pacmanSize;
-            // const pacmanLeftSide = circle.x;
-            // const pacmanRightSide = circle.x + circle.scaleX * pacmanSize;
-
-            // console.log("Test-")
-            // console.log(circle.x + " " + circle.y)
-
             let pixelCoords = screenToPixel(circle.x, circle.y)
             var pacmanX = pixelCoords.x;
             var pacmanY = pixelCoords.y;
-
-            // console.log(pacmanX + " " + pacmanY)
-
-            //var backToX = pacmanX * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
-            //var backToY = pacmanY * maze.scaleY;
-
-            // console.log(backToX + " " + backToY)
-
-            // console.log(pacmanX + " " + pacmanY) 
-            // console.log(pacmanX + 8 + " " + (pacmanY + 8))
-
-            // for (let i = 0; i < collisionMap.length; i++) {
-            //     for (let ii = 0; ii < collisionMap[0].length; ii++) {
-            //         if (collisionMap[i][ii]==1) {
-            //             var ctx = canvas.getContext("2d");
-            //             ctx.strokeStyle = "#FF0000";
-            //             let boxX = ii * maze.scaleX + windowWidth/2 - (maze.scaleX * mazeWidth/2);
-            //             let boxY = i * maze.scaleY;
-            //             //console.log(boxX + " " + boxY)
-            //             ctx.fillRect(boxX, boxY, 10, 10);
-            //         }
-            //     }
-            // }
 
             // console.log(pacmanX + " " + pacmanY)
             for (let i = pacmanY + 2; i < pacmanY + 14; i++) {
@@ -574,22 +513,6 @@
                     }
                 }
             }
-
-            // Right side collision
-            //if (pacmanRightSide > windowWidth/2 + maze.scaleX * mazeWidth/2) {    
-            //    circle.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - circle.scaleX * pacmanSize;
-            // Left side collision
-            //} else if (pacmanLeftSide < windowWidth/2 - maze.scaleX * mazeWidth/2) {
-            //    circle.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
-            //}
-
-            // Bottom side collision
-            //if (pacmanBottomSide > windowHeight/2 + maze.scaleY * mazeHeight/2) {
-            //    circle.y = windowHeight/2 + maze.scaleY * mazeHeight/2 - circle.scaleY * pacmanSize;
-            // Top side collision
-            //} else if (pacmanTopSide < windowHeight/2 - maze.scaleY * mazeHeight/2) {
-            //    circle.y = windowHeight/2 - maze.scaleY * mazeHeight/2;
-            //}
         }
 
         function pixelToScreen(xCoord,yCoord) {
@@ -695,20 +618,6 @@
             }
             circle.lastAni = newAni;
 
-
-            //if (circle.x < 0) {
-            //    circle.x = 0;
-            //}
-            //if (circle.x > windowWidth) {
-            //    circle.x = windowWidth;
-            //}
-
-            //if (circle.y < 0) {
-            //    cricle.y = 0;
-            //}
-            //if (circle.y > windowHeight) {
-            //    circle.y = windowHeight;
-            //}
             ghosts = [blue, red, orange, pink]
             ghosts.forEach(a => (moveGhost(a)))
             checkGhosts(ghosts)
@@ -780,10 +689,14 @@
         }
 
         function spriteIntersects(sprite1, size1, sprite2, size2) {
-            return sprite1.x < (sprite2.x + maze.scaleX * size2/2) && 
-                   (sprite1.x + maze.scaleX * size1/2) > sprite2.x && 
-                   sprite1.y < (sprite2.y + maze.scaleY * size2/2) && 
-                   (sprite1.y + maze.scaleY * size1/2) > sprite2.y
+            //let cv = document.getElementById("mainCanvas");
+            //let ctx = cv.getContext("2d");
+            //ctx.strokeStyle = "#FF0000";
+            //ctx.strokeRect(sprite1.x, sprite1.y, size1, size1);
+            return sprite1.x < (sprite2.x + maze.scaleX * size2) && 
+                   (sprite1.x + maze.scaleX * size2) > sprite2.x && 
+                   sprite1.y < (sprite2.y + maze.scaleY * size2) && 
+                   (sprite1.y + maze.scaleY * size2) > sprite2.y
         }
 
 	</script>
