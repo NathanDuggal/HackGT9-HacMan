@@ -71,6 +71,8 @@
             characters = [];
 
         var score = 0;
+        var powerUp = false;
+
 
         function loadSound() {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
@@ -436,6 +438,15 @@
         function moveGhost(ghost) {
             const beforeX = ghost.x;
             const beforeY = ghost.y;
+
+            if (ghost.lastAnimation == undefined) {
+                ghost.lastAnimation = ghost.currentAnimation.split("Move")[0] + "MoveRight"
+            }
+
+            if (powerUp) {
+                ghost.currentAnimation = ghost.lastAnimation
+            }
+
             move_value = 2;
             if (ghost.currentAnimation.includes("MoveUp")) {
                 ghost.y += -move_value;
@@ -470,15 +481,19 @@
                     actualPossibleMovements.push(possibleMovements[j])
                 }
             }
-            if (actualPossibleMovements.includes(ghost.currentAnimation.split("Move")[1]) && Math.random() > 0.02) {
-                nextMovement = ghost.currentAnimation;
+            if (actualPossibleMovements.includes(ghost.lastAnimation.split("Move")[1]) && Math.random() > 0.02) {
+                nextMovement = ghost.lastAnimation;
                 console.log(1)
             } else {
                 console.log(2)
-                nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+                nextMovement = ghost.lastAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             }
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
-            // ghost.lastAnimation = ghost.currentAnimation
+            ghost.lastAnimation = nextMovement;
+            if (powerUp){
+                nextMovement = "deadMove"
+            }
+
             ghost.gotoAndPlay(nextMovement);
         }
 
@@ -629,6 +644,7 @@
             checkGhosts(ghosts)
             movePacman();
             checkDots();
+            checkBigDots();
             moveGhost(blue);
             moveGhost(red);
             moveGhost(orange);
@@ -672,6 +688,19 @@
                     score += 20;
                 }
             }
+        }
+
+        function checkBigDots() {
+            for (let i = 0; i < bigDots.length; i++) {
+                let dot = bigDots[i];
+                if (spriteIntersects(circle, pacmanSize, dot, 8)) {
+                    bigDots.splice(i, 1);
+                    stage.removeChild(dot);
+                    chomp = createjs.Sound.play("chomp");
+                    powerUp = true;
+                }
+            }
+            setTimeout(function(){ powerUp=false }, 15000)
         }
 
         function checkGhosts(ghosts) {
