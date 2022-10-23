@@ -383,6 +383,7 @@
             movementArray = [[0,-8], [0,8], [8,0], [-8,0]];
             var possibleMovements = ["Up", "Down", "Right", "Left"];
             var actualPossibleMovements = [];
+            var nextMovement;
 
             let pixelCoords = screenToPixel(ghost.x, ghost.y)
             var ghostX = pixelCoords.x;
@@ -402,13 +403,13 @@
                     actualPossibleMovements.push(possibleMovements[j])
                 }
             }
-            // if (actualPossibleMovements.includes(ghost.lastAnimation)){
-            //     ghost.gotoAndPlay(ghost.lastAnimation);
-            // } else {
-            //     var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
-            //     ghost.gotoAndPlay(nextMovement);
-            // }
-            var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            if (actualPossibleMovements.includes(ghost.lastAnimation.split("Move")[1])){
+                nextMovement = ghost.lastAnimation;
+                console.log(1)
+            } else {
+                nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            }
+            // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             ghost.lastAnimation = ghost.currentAnimation
             ghost.gotoAndPlay(nextMovement);
             
