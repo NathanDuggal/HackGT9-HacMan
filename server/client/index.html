@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"> </script>
     <link rel="stylesheet" href="assets/sprites/style.css">
     <script>
 
@@ -49,6 +49,10 @@
         //lol sample
         Array.prototype.sample = function(){
             return this[Math.floor(Math.random()*this.length)];
+        }
+
+        function loadSound () {
+            createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
         }
 
 		var circle, 
@@ -290,9 +294,9 @@
             characters.push(pink);
             pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 120;
             pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
-            pink.gotoAndPlay("pinkMoveUp");
+            pink.gotoAndPlay("pinkMoveRight");
 
-            // Pink Ghost
+            // Blue Ghost
 			blue = new createjs.Sprite(spriteSheet);
 			setScale(blue);
             characters.push(blue);
@@ -306,7 +310,7 @@
             characters.push(orange);
             orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 120;
             orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
-            orange.gotoAndPlay("orangeMoveUp");
+            orange.gotoAndPlay("orangeMoveRight");
             
             // Small Dots
             for (let i = 0; i < smallDotMap.length; i++) {
@@ -391,6 +395,7 @@
             movementArray = [[0,-8], [0,8], [8,0], [-8,0]];
             var possibleMovements = ["Up", "Down", "Right", "Left"];
             var actualPossibleMovements = [];
+            var nextMovement;
 
             let pixelCoords = screenToPixel(ghost.x, ghost.y)
             var ghostX = pixelCoords.x;
@@ -410,9 +415,16 @@
                     actualPossibleMovements.push(possibleMovements[j])
                 }
             }
-
-            var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            if (actualPossibleMovements.includes(ghost.lastAnimation.split("Move")[1])){
+                nextMovement = ghost.lastAnimation;
+                console.log(1)
+            } else {
+                nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            }
+            // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            ghost.lastAnimation = ghost.currentAnimation
             ghost.gotoAndPlay(nextMovement);
+            
         }
 
 
@@ -604,8 +616,8 @@
             //}
             
             movePacman();
-            moveGhost(red);
             moveGhost(blue);
+            moveGhost(red);
             moveGhost(orange);
             moveGhost(pink);
         }
