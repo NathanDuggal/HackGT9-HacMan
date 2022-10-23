@@ -44,7 +44,6 @@
 
         // Joystick properties
         const deadThresh = 0.8;
-        var lastAni = "pacmanIdleRight";
 
         //lol sample
         Array.prototype.sample = function(){
@@ -307,6 +306,7 @@
             circle.y = windowHeight/2 + circle.scaleY * pacmanSize/2 + 4;
             circle.x = windowWidth/2 - circle.scaleX * pacmanSize/2;
             circle.gotoAndPlay("pacmanIdleRight");
+            circle.lastAni = "pacmanIdleRight";
 
             // Red Ghost
 			red = new createjs.Sprite(spriteSheet);
@@ -470,7 +470,6 @@
                 nextMovement = ghost.currentAnimation;
                 console.log(1)
             } else {
-                console.log(2)
                 nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             }
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
@@ -655,12 +654,14 @@
                     }
                 }
             } else {
-                newAni = lastAni.replace("Move", "Idle");
+                if (circle.lastAni != undefined) {
+                    newAni = circle.lastAni.replace("Move", "Idle");
+                }
             }
-            if (newAni != lastAni) {
+            if (newAni != circle.lastAni) {
                 circle.gotoAndPlay(newAni);
             }
-            lastAni = newAni;
+            circle.lastAni = newAni;
 
 
             //if (circle.x < 0) {
@@ -678,6 +679,7 @@
             //}
             
             movePacman();
+            checkDots();
             moveGhost(blue);
             moveGhost(red);
             moveGhost(orange);
@@ -707,6 +709,23 @@
             xmlHttp.open( "GET", "/calibrate", false); // false for synchronous request
             xmlHttp.send();
             setTimeout(init, 5000);
+        }
+
+        function checkDots() {
+            for (let i = 0; i < smallDots.length; i++) {
+                let dot = smallDots[i];
+                if (spriteIntersects(circle, pacmanSize, dot, 2)) {
+                    smallDots.splice(i,1);
+                    stage.removeChild(dot);
+                }
+            }
+        }
+
+        function spriteIntersects(sprite1, size1, sprite2, size2) {
+            return sprite1.x < (sprite2.x + maze.scaleX * size2/2) && 
+                   (sprite1.x + maze.scaleX * size1/2) > sprite2.x && 
+                   sprite1.y < (sprite2.y + maze.scaleY * size2/2) && 
+                   (sprite1.y + maze.scaleY * size1/2) > sprite2.y
         }
 
 	</script>
