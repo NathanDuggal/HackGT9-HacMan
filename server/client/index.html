@@ -717,20 +717,28 @@
                     powerUp = true;
                 }
             }
-            setTimeout(function(){ powerUp=false }, 15000)
+            //setTimeout(function(){ powerUp=false }, 15000)
         }
 
         function checkGhosts(ghosts) {
             let collided = false;
+
             for (let i = 0; i < ghosts.length; i++) {
                 if (spriteIntersects(ghosts[i], pacmanSize, circle, pacmanSize)) {
-                    collided = true;
-                    //chomp.paused = true;
-                    createjs.Sound.play("death");
-                    score -= 50;
+                    if (powerUp) {
+                        ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
+                        ghosts[i].x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
+                        score += 200;
+                    } else {
+                        collided = true;
+                        //chomp.paused = true;
+                        createjs.Sound.play("death");
+                        score -= 50;
+                    }
+
                 }
             }
-            if (collided) {
+            if (collided && !powerUp) {
                 for (let i = 0; i < ghosts.length; i++) {
                     ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
                     ghosts[i].x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
