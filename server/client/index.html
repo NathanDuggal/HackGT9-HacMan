@@ -750,7 +750,7 @@
         function checkDots() {
             for (let i = 0; i < smallDots.length; i++) {
                 let dot = smallDots[i];
-                if (spriteIntersects(circle, pacmanSize, dot, 2)) {
+                if (spriteIntersects(circle, pacmanSize, dot, 6)) {
                     smallDots.splice(i,1);
                     stage.removeChild(dot);
                     createjs.Sound.play("chomp");
