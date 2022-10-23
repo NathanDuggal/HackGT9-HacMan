@@ -514,6 +514,13 @@
                     }
                 }
             }
+
+            if (circle.x - pacmanSize > windowWidth/2 + maze.scaleX * mazeWidth/2) {
+                circle.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
+            }
+            if (circle.x < windowWidth/2 - maze.scaleX * mazeWidth/2) {
+                circle.x = windowWidth/2 + maze.scaleX * mazeWidth/2 - pacmanSize;
+            }
         }
 
         function pixelToScreen(xCoord, yCoord) {
