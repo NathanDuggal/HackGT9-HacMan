@@ -69,7 +69,6 @@
             bigDots = [], 
             characters = [];
         
-        var life = 3;
         var score = 0;
 
         function loadSound () {
@@ -83,7 +82,6 @@
 
 		function init() {
             var z1 = document.getElementById("calibrating");
-            z1.style.display = "none"
             this.toggleScreen('start-screen', false);
             this.toggleScreen('gameover-screen', false);
             this.toggleScreen('mainCanvas', true);
@@ -249,7 +247,7 @@
 
             spriteSheet = new createjs.SpriteSheet(characterImage);
             var smallDotSheet = new createjs.SpriteSheet(smallDotImage);
-            var bigDotSheet = new createjs.SpriteSheet(smallDotImage);
+            var bigDotSheet = new createjs.SpriteSheet(bigDotImage);
             var textSheet = new createjs.SpriteSheet(textImage);
             var mazeSheet = new createjs.SpriteSheet(mazeImage);
             
@@ -299,7 +297,6 @@
             // Background
             maze = new createjs.Sprite(mazeSheet);
             setScale(maze);
-            characters.push(maze);
             maze.y = 0;
             maze.x = windowWidth/2 - maze.scaleX * mazeWidth/2;
 
@@ -366,13 +363,49 @@
                     }
                 }
             }
-			
-            // 
-            characters.forEach(sprite => {
+
+            // Big Dots
+            var screenCoords;
+
+            let bd1 = new createjs.Sprite(bigDotSheet);
+            setScale(bd1);
+            screenCoords = pixelToScreen(8,24);
+            bd1.x = screenCoords.x;
+            bd1.y = screenCoords.y;
+            bigDots.push(bd1);
+
+            let bd2 = new createjs.Sprite(bigDotSheet);
+            setScale(bd2);
+            screenCoords = pixelToScreen(208,24);
+            bd2.x = screenCoords.x;
+            bd2.y = screenCoords.y;
+            bigDots.push(bd2);
+
+            let bd3 = new createjs.Sprite(bigDotSheet);
+            setScale(bd3);
+            screenCoords = pixelToScreen(8,184);
+            bd3.x = screenCoords.x;
+            bd3.y = screenCoords.y;
+            bigDots.push(bd3);
+
+            let bd4 = new createjs.Sprite(bigDotSheet);
+            setScale(bd4);
+            screenCoords = pixelToScreen(208,184);
+            bd4.x = screenCoords.x;
+            bd4.y = screenCoords.y;
+            bigDots.push(bd4);
+
+            stage.addChild(maze);
+
+            smallDots.forEach(sprite => {
                 stage.addChild(sprite);
             });
 
-            smallDots.forEach(sprite => {
+            bigDots.forEach(sprite => {
+                stage.addChild(sprite);
+            });
+
+            characters.forEach(sprite => {
                 stage.addChild(sprite);
             });
 
@@ -420,17 +453,10 @@
 
         function start() {
             console.log("entered start function");
-            if (life > 0){
             // Start game loop
-                console.log("started game loop");
-                createjs.Ticker.framerate = 60;
-			    createjs.Ticker.on("tick", tick);
-            }
-            else{
-                console.log("ended game loop (life is 0)")
-                createjs.Ticker.paused = true;
-                gameOver();
-            }
+            console.log("started game loop");
+            createjs.Ticker.framerate = 60;
+			createjs.Ticker.on("tick", tick);
         }
 
         function moveGhost(ghost) {
@@ -587,8 +613,10 @@
             let x = 0;
             let y = 0;
 
-            if (life <= 0) {
-                isDead = true;
+            if (life == 0) {
+                console.log("ended game loop (life is 0)")
+                createjs.Ticker.paused = true;
+                gameOver();
             }
 
             try {
@@ -656,7 +684,6 @@
             } else {
                 if (circle.lastAni != undefined) {
                     newAni = circle.lastAni.replace("Move", "Idle");
-                }
             }
             if (newAni != circle.lastAni) {
                 circle.gotoAndPlay(newAni);
@@ -716,7 +743,7 @@
         function checkDots() {
             for (let i = 0; i < smallDots.length; i++) {
                 let dot = smallDots[i];
-                if (spriteIntersects(circle, pacmanSize, dot, 2)) {
+                if (spriteIntersects(circle, pacmanSize, dot, 6)) {
                     smallDots.splice(i,1);
                     stage.removeChild(dot);
                     chomp = createjs.Sound.play("chomp");
@@ -741,6 +768,7 @@
                     ghosts[i].y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 400;
                     ghosts[i].x = windowWidth/2 - pink.scaleX * pacmanSize/2;
                 }
+                life--;
             }
         }
 
