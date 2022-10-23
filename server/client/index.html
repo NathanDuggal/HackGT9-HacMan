@@ -32,7 +32,7 @@
 
         // Maze collision map
         var collisionMap = 
-        fetch('assets/sprites/corners.json')
+        fetch('assets/sprites/ghosts.json')
             .then((response) => response.json())
             .then((json) => collisionMap = json);
 
@@ -46,9 +46,12 @@
         const deadThresh = 0.8;
         var lastAni = "pacmanIdleRight";
 
-        // Instance variables
-		var circle, maze, characters, spriteSheet, stage, canvas, ctx, isFullScreen, isBackgroundPlaying, isDead, isJojiPlaying, sprites = [];
-        var circle, 
+        //lol sample
+        Array.prototype.sample = function(){
+            return this[Math.floor(Math.random()*this.length)];
+        }
+
+		var circle, 
             maze, 
             characterImage, 
             spriteSheet, 
@@ -276,15 +279,39 @@
             // Red Ghost
 			red = new createjs.Sprite(spriteSheet);
 			setScale(red);
-            sprites.push(red);
+            characters.push(red);
             red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 120;
             red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
-            red.gotoAndPlay("redIdleRight");
+            red.gotoAndPlay("redMoveRight");
+
+            // Pink Ghost
+			pink = new createjs.Sprite(spriteSheet);
+			setScale(pink);
+            characters.push(pink);
+            pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 120;
+            pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
+            pink.gotoAndPlay("pinkMoveUp");
+
+            // Pink Ghost
+			blue = new createjs.Sprite(spriteSheet);
+			setScale(blue);
+            characters.push(blue);
+            blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 - 120;
+            blue.x = windowWidth/2 - blue.scaleX * pacmanSize/2;
+            blue.gotoAndPlay("blueMoveRight");
+
+            // Orange Ghost
+			orange = new createjs.Sprite(spriteSheet);
+			setScale(orange);
+            characters.push(orange);
+            orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 120;
+            orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
+            orange.gotoAndPlay("orangeMoveUp");
             
             // Small Dots
             for (let i = 0; i < smallDotMap.length; i++) {
                 for (let ii = 0; ii < smallDotMap[0].length; ii++) {
-                    console.log(i + " " + ii);
+                    //console.log(i + " " + ii);
                     if (smallDotMap[i][ii]==1) {
                         let screenCoords = pixelToScreen(ii,i);
                         let dot = new createjs.Sprite(smallDotSheet);
@@ -347,6 +374,47 @@
             // Start game loop
 			createjs.Ticker.on("tick", tick);
         }
+
+        function moveGhost(ghost) {
+            const beforeX = ghost.x;
+            const beforeY = ghost.y;
+            if (ghost.currentAnimation.includes("MoveUp")) {
+                ghost.y += -8;
+            } else if (ghost.currentAnimation.includes("MoveDown")) {
+                ghost.y += 8;
+            } else if (ghost.currentAnimation.includes("MoveRight")) {
+                ghost.x += 8;
+            } else if (ghost.currentAnimation.includes("MoveLeft")) {
+                ghost.x += -8;
+            }
+
+            movementArray = [[0,-8], [0,8], [8,0], [-8,0]];
+            var possibleMovements = ["Up", "Down", "Right", "Left"];
+            var actualPossibleMovements = [];
+
+            let pixelCoords = screenToPixel(ghost.x, ghost.y)
+            var ghostX = pixelCoords.x;
+            var ghostY = pixelCoords.y;
+
+            for (let j=0; j<4; j++){
+                coords = movementArray[j]
+                let isValid = true;
+                for (let i = ghostY + coords[1] + 2; i < ghostY + coords[1] + 14; i++) {
+                    for (let ii = ghostX + coords[0] + 2; ii < ghostX + coords[0] + 14; ii++) {
+                        if (i >= 0 && ii >=0 && collisionMap[i][ii] == 1) {
+                            isValid = false;
+                        }
+                    }
+                }
+                if (isValid) {
+                    actualPossibleMovements.push(possibleMovements[j])
+                }
+            }
+
+            var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            ghost.gotoAndPlay(nextMovement);
+        }
+
 
         function movePacman() {
 
@@ -452,8 +520,9 @@
             let y = 0;
 
             try {
-                throw new Error();
+                //throw new Error();
                 var xmlHttp = new XMLHttpRequest();
+                //var background;
                 
                 xmlHttp.open( "GET", "/data", false ); // false for synchronous request
                 xmlHttp.send();
@@ -466,19 +535,17 @@
                 
                 if (!isBackgroundPlaying) {
                     var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5})
+                    //createjs.Sound.play("glimpseOfUs", jojiProps);
                     background = createjs.Sound.play("backgroundMusic", backgroundProps);
                     isBackgroundPlaying = true;
                 }
-
                 
                 if(isDead && !isJojiPlaying) {
                     var jojiProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.8})
-                    //background.paused = true;
-                    createjs.Sound.stop("backgroundMusic", backgroundProps);
+                    background.paused = true;
                     createjs.Sound.play("glimpseOfUs", jojiProps);
                     isJojiPlaying = true;
                 }
-                
                 
                 if (canvas.getContext) {
                     ctx.fillStyle = "rgba(0, 0, 0, 255)";
@@ -537,6 +604,10 @@
             //}
             
             movePacman();
+            moveGhost(red);
+            moveGhost(blue);
+            moveGhost(orange);
+            moveGhost(pink);
         }
 
         function setScale(sprite) {
@@ -562,10 +633,6 @@
             xmlHttp.open( "GET", "/calibrate", false); // false for synchronous request
             xmlHttp.send();
             setTimeout(init, 5000);
-        }
-
-        function loadSound () {
-            createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
         }
 
 	</script>
@@ -603,16 +670,28 @@
             <br>
             Pacman controlled by your mom!
         </p>
-        
-       
     </div>
-    <div id='calibrating' style="display:none">
-        <div class="header">
-            <h1>Calibrating...</h1>
-          </div>
-        <p>Stare at the middle of the screen!</p>
-        <div id = 'dot'>
-        </div>
+
+    <div id='calibrating' class='screen' style="display:none">
+        <p class="center">
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            look here
+        </p>
+        <p2 class="center">X</p2>
+        <br>
+        <br>
+
+        <p1 class="center">
+            Calibrating
+            <br>
+            <br>
+        </p1>
+        <img class="animated-gif" src="assets/sprites/calibrating.gif">
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
         alternate content
