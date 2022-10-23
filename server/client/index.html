@@ -67,7 +67,7 @@
             bigDots = [], 
             characters = [];
         
-        var life = 0;
+        var life = 3;
         var score = 0;
 
         function loadSound () {
@@ -599,7 +599,6 @@
                 
                 if (!isBackgroundPlaying) {
                     var backgroundProps = new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5})
-                    //createjs.Sound.play("glimpseOfUs", jojiProps);
                     background = createjs.Sound.play("backgroundMusic", backgroundProps);
                     isBackgroundPlaying = true;
                 }
@@ -610,8 +609,6 @@
                     createjs.Sound.play("glimpseOfUs", jojiProps);
                     isJojiPlaying = true;
                 }
-
-
                 
                 if (canvas.getContext) {
                     ctx.font = "20px pixelation";
@@ -628,7 +625,6 @@
                     ctx.fillStyle = "#c90294";
                     ctx.fill();
 
-                    score += 1;
                     console.log(score);
                     ctx.font = "30px pixelation";
                     ctx.fillText("Score: " + score, gamepadX, 100);
@@ -717,6 +713,8 @@
                 if (spriteIntersects(circle, pacmanSize, dot, 2)) {
                     smallDots.splice(i,1);
                     stage.removeChild(dot);
+                    createjs.Sound.play("chomp");
+                    score += 20;
                 }
             }
         }
