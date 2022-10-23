@@ -62,7 +62,8 @@
             stage, 
             canvas, 
             ctx, 
-            isFullScreen, 
+            isFullScreen,
+            score, 
             smallDots = [], 
             bigDots = [], 
             characters = [];
@@ -89,6 +90,7 @@
             isBackgroundPlaying = false;
             isJojiPlaying = false;
             isDead = false;
+            score = 0;
 
             characterImage = {
                 images: ["assets/sprites/Pacman.png"],
@@ -430,7 +432,6 @@
             // var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
             ghost.lastAnimation = ghost.currentAnimation
             ghost.gotoAndPlay(nextMovement);
-            
         }
 
 
@@ -564,8 +565,12 @@
                     createjs.Sound.play("glimpseOfUs", jojiProps);
                     isJojiPlaying = true;
                 }
+
+
                 
                 if (canvas.getContext) {
+                    ctx.font = "20px pixelation";
+                    ctx.fillText("Joystick ", gamepadX, gamepadY - 10);
                     ctx.fillStyle = "rgba(0, 0, 0, 255)";
                     ctx.clearRect(gamepadX, gamepadY, 100,100);
                     ctx.beginPath();
@@ -575,8 +580,13 @@
 
                     ctx.beginPath();
                     ctx.arc(initCircleX + x * 30, initCircleY - y * 30, 20, 0, 2*Math.PI);
-                    ctx.fillStyle = "#FF0000";
+                    ctx.fillStyle = "#c90294";
                     ctx.fill();
+
+                    score += 1;
+                    console.log(score);
+                    ctx.font = "30px pixelation";
+                    ctx.fillText("Score: " + score, gamepadX, 100);
                 }
             }
             
@@ -669,7 +679,7 @@
             <br>
             <br>
             <br>
-            natman pranibbles cool-angela kot
+            natman pranibbles caangela kot
             <br>
             <br>
             <br>
