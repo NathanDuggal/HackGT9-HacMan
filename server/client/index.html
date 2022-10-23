@@ -32,7 +32,7 @@
 
         // Maze collision map
         var collisionMap = 
-        fetch('assets/sprites/corners.json')
+        fetch('assets/sprites/ghosts.json')
             .then((response) => response.json())
             .then((json) => collisionMap = json)
             .then(e => console.log(collisionMap));
@@ -42,7 +42,13 @@
         var lastAni = "pacmanIdleRight";
 
         // Instance variables
-		var circle, maze, characters, spriteSheet, stage, canvas, ctx, isFullScreen, isBackgroundPlaying, sprites = [];
+		var circle, red, pink, blue, orange, maze, characters, spriteSheet, stage, canvas, ctx, isFullScreen, isBackgroundPlaying, sprites = [];
+
+
+        //lol sample
+        Array.prototype.sample = function(){
+            return this[Math.floor(Math.random()*this.length)];
+        }
 
         function loadSound () {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
@@ -258,7 +264,31 @@
             sprites.push(red);
             red.y = windowHeight/2 + red.scaleY * pacmanSize/2 - 120;
             red.x = windowWidth/2 - red.scaleX * pacmanSize/2;
-            red.gotoAndPlay("redIdleRight");
+            red.gotoAndPlay("redMoveRight");
+
+            // Pink Ghost
+			pink = new createjs.Sprite(spriteSheet);
+			setScale(pink);
+            sprites.push(pink);
+            pink.y = windowHeight/2 + pink.scaleY * pacmanSize/2 - 120;
+            pink.x = windowWidth/2 - pink.scaleX * pacmanSize/2;
+            pink.gotoAndPlay("pinkMoveUp");
+
+            // Pink Ghost
+			blue = new createjs.Sprite(spriteSheet);
+			setScale(blue);
+            sprites.push(blue);
+            blue.y = windowHeight/2 + blue.scaleY * pacmanSize/2 - 120;
+            blue.x = windowWidth/2 - blue.scaleX * pacmanSize/2;
+            blue.gotoAndPlay("blueMoveRight");
+
+            // Orange Ghost
+			orange = new createjs.Sprite(spriteSheet);
+			setScale(orange);
+            sprites.push(orange);
+            orange.y = windowHeight/2 + orange.scaleY * pacmanSize/2 - 120;
+            orange.x = windowWidth/2 - orange.scaleX * pacmanSize/2;
+            orange.gotoAndPlay("orangeMoveUp");
 			
             // 
             sprites.forEach(sprite => {
@@ -303,6 +333,42 @@
             // Start game loop
 			createjs.Ticker.on("tick", tick);
         }
+
+        function moveGhost(ghost) {
+            const beforeX = ghost.x;
+            const beforeY = ghost.y;
+            if (ghost.currentAnimation.includes("MoveUp")) {
+                ghost.y += -8;
+            } else if (ghost.currentAnimation.includes("MoveDown")) {
+                ghost.y += 8;
+            } else if (ghost.currentAnimation.includes("MoveRight")) {
+                ghost.x += 8;
+            } else if (ghost.currentAnimation.includes("MoveLeft")) {
+                ghost.x += -8;
+            }
+
+            movementArray = [[0,-8], [0,8], [8,0], [-8,0]]
+            var possibleMovements = ["Up", "Down", "Right", "Left"]
+            var actualPossibleMovements = []
+            for (let j=0; j<4; j++){
+                coords = movementArray[j]
+                let isValid = true;
+                for (let i = pacmanY + coords[1] + 2; i < pacmanY + coords[1] + 14; i++) {
+                    for (let ii = pacmanX + coords[0] + 2; ii < pacmanX + coords[0] + 14; ii++) {
+                        if (i >= 0 && ii >=0 && collisionMap[i][ii] == 1) {
+                            isValid = false;
+                        }
+                    }
+                }
+                if (isValid) {
+                    actualPossibleMovements.push(possibleMovements[j])
+                }
+            }
+
+            var nextMovement = ghost.currentAnimation.split("Move")[0] + "Move" + actualPossibleMovements.sample();
+            ghost.gotoAndPlay(nextMovement);
+        }
+
 
         function movePacman() {
 
@@ -470,6 +536,10 @@
             //}
             
             movePacman();
+            moveGhost(red);
+            moveGhost(blue);
+            moveGhost(orange);
+            moveGhost(pink);
         }
 
         function setScale(sprite) {
