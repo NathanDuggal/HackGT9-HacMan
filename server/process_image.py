@@ -3,7 +3,7 @@ import numpy as np
 from tkinter import Tk, filedialog
 import os
 
-img = cv2.imread('client/assets/sprites/process_image.png', cv2.IMREAD_GRAYSCALE)
+img = cv2.imread('client/assets/sprites/BigDotMap.png', cv2.IMREAD_GRAYSCALE)
 print(img)
-with open("corners.txt", 'w') as file:
+with open("bigdotmap.json", 'w') as file:
     file.write(str([list(e) for e in list(np.where(img > 0.5, 1, 0))]))
