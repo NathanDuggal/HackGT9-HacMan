@@ -66,9 +66,9 @@
             isFullScreen,
             score, 
             chomp,
-            smallDots = [], 
-            bigDots = [], 
-            characters = [];
+            smallDots, 
+            bigDots, 
+            characters;
 
         var score = 0;
         var powerupJuice = 0;
@@ -314,6 +314,8 @@
             maze.y = 0;
             maze.x = windowWidth / 2 - maze.scaleX * mazeWidth / 2;
 
+            characters = [];
+
             // Pacman
             circle = new createjs.Sprite(spriteSheet);
             setScale(circle);
@@ -360,6 +362,7 @@
             orange.gotoAndPlay("orangeMoveRight");
 
             // Small Dots
+            smallDots = [];
             for (let i = 0; i < smallDotMap.length; i++) {
                 for (let ii = 0; ii < smallDotMap[0].length; ii++) {
                     //console.log(i + " " + ii);
@@ -379,6 +382,8 @@
             }
 
             // Big Dots
+            bigDots = [];
+
             var screenCoords;
 
             let bd1 = new createjs.Sprite(bigDotSheet);
@@ -707,10 +712,18 @@
             life = 3;
             score=0;
 
-            createjs.Ticker.on("tick", a => []);
+            createjs.Ticker.on("tick", a => {});
             stage.removeAllChildren();
-            let context = document.getElementById('mainCanvas').getContext('2d');
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            let canvas = document.getElementById('mainCanvas');
+            let context = canvas.getContext('2d');
+            ctx.strokeStyle = "#000000";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            smallDotMap =
+            fetch('assets/sprites/small_dot_map.json')
+                .then((response) => response.json())
+                .then((json) => smallDotMap = json)
+
             calibrate();
         }
 
@@ -737,23 +750,34 @@
                         gainPowerup();
                     }
                     powerUp = true;
+                    setTimeout(function(){ powerUp=false }, 15000)
                 }
             }
 
             setTimeout(function(){ powerUp=false }, 15000)
+
+            
         }
 
         function checkGhosts(ghosts) {
             let collided = false;
+
             for (let i = 0; i < ghosts.length; i++) {
                 if (spriteIntersects(ghosts[i], pacmanSize, circle, pacmanSize)) {
-                    collided = true;
-                    //chomp.paused = true;
-                    createjs.Sound.play("death");
-                    score -= 50;
+                    if (powerUp) {
+                        ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
+                        ghosts[i].x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
+                        score += 200;
+                    } else {
+                        collided = true;
+                        //chomp.paused = true;
+                        createjs.Sound.play("death");
+                        score -= 50;
+                    }
+
                 }
             }
-            if (collided) {
+            if (collided && !powerUp) {
                 for (let i = 0; i < ghosts.length; i++) {
                     ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
                     ghosts[i].x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
