@@ -353,7 +353,7 @@
             // Blue Ghost
             blue = new createjs.Sprite(spriteSheet);
             setScale(blue);
-            characters.push(blue);
+            characters.push(blue);[]
             blue.y = windowHeight / 2 + blue.scaleY * pacmanSize / 2 - 400;
             blue.x = windowWidth / 2 - blue.scaleX * pacmanSize / 2;
             blue.lastAnimation = "blueMoveRight"
@@ -788,7 +788,7 @@
             for (let i = 0; i < ghosts.length; i++) {
                 if (spriteIntersects(ghosts[i], pacmanSize, circle, pacmanSize)) {
                     if (powerUp) {
-                        ghosts[i].y = windowHeight / 2 + maze.scaleY * pacmanSize / 2 - 375;
+                        ghosts[i].y = windowHeight / 2 + maze.scaleY * pacmanSize / 2 - 440;
                         ghosts[i].x = windowWidth / 2 - maze.scaleX * pacmanSize / 2;
                         console.log(ghosts[i]);
                         score += 200;
@@ -803,8 +803,10 @@
             }
             if (collided && !powerUp) {
                 for (let i = 0; i < ghosts.length; i++) {
-                    ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 400;
+                    ghosts[i].y = windowHeight / 2 + pink.scaleY * pacmanSize / 2 - 440;
                     ghosts[i].x = windowWidth / 2 - pink.scaleX * pacmanSize / 2;
+                    circle.y = windowHeight / 2 + circle.scaleY * pacmanSize / 2 + 4;
+                    circle.x = windowWidth / 2 - circle.scaleX * pacmanSize / 2;
                 }
                 life--;
             }
@@ -855,7 +857,7 @@
             <br>
             <br>
             <br>
-            Pacman controlled by your mom!
+            Pacman controlled by your head!
         </p>
     </div>
 
