@@ -67,6 +67,9 @@
             smallDots = [], 
             bigDots = [], 
             characters = [];
+        
+        var life = 0;
+        var score = 0;
 
         function loadSound () {
             createjs.Sound.registerSound("assets/sprites/backgroundMusic.mp3", "backgroundMusic");
@@ -81,6 +84,7 @@
             var z1 = document.getElementById("calibrating");
             z1.style.display = "none"
             this.toggleScreen('start-screen', false);
+            this.toggleScreen('gameover-screen', false);
             this.toggleScreen('mainCanvas', true);
             // -----------------
             // Initialize Assets
@@ -372,7 +376,17 @@
             start();
 		}
 
+        function gameOver() {
+            console.log("called game over");
+            //this.toggleScreen('start-screen', false);
+            this.toggleScreen('mainCanvas', false);
+            this.toggleScreen('gameover-screen', true);
+            console.log("toggled screens to show game over screen");
+        }
+
         function displayMenu() {
+            //console.log('b'.charCodeAt(0) - 97);
+            //console.log(makeSpriteString("hi"));
             //displaySpriteString(100,100,makeSpriteString("hello"));
             stage.addChild(new Sprite(textSheet, 0));
             stage.update(null);
@@ -747,8 +761,13 @@
         <img class="animated-gif" src="assets/sprites/calibrating.gif">
     </div>
     <div id='gameover-screen' class='screen' style='display:none'>
-        <p>
-            Game over
+        <p class='center'>
+            <br>
+            <br>
+            Game over :(
+            <div class="center button">
+                <button onclick='calibrate()'></button>
+            </div>
         <p>
     </div>
     <canvas id="mainCanvas" style="display:none" width="500" height="300">
