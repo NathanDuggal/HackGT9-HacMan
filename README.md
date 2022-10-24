@@ -6,7 +6,7 @@ Built for the HackGT9 Hackathon: Play Pacman using just your face!
 
 Runs dlib facial recognition on a Python Flask server; connects to a custom pacman game, built from the ground up on a create.js website. Youtube [runthrough](https://www.youtube.com/watch?v=367b0_ShnhA).
 
-Contributers:
+Contributors:
   - Nathan Duggal
   - Katherine Huang
   - Pranav Tadepalli
